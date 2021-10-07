@@ -1,0 +1,14 @@
+
+# package directories
+node_modules
+jspm_packages
+
+.build
+
+.DS_Store
+
+dist
+
+test.js
+
+.env
