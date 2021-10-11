@@ -88,12 +88,12 @@ export const cap = {
    * Root Canister
    */
   async get_transaction(
-    tokenId: string,
-    txnId: number,
+    tokenId: Principal,
+    txnId: bigint,
     witness: boolean
   ): Promise<GetTransactionResponse> {
-    return (await rootActor(Principal.fromText(tokenId))).get_transaction({
-      id: BigInt(txnId),
+    return (await rootActor(tokenId)).get_transaction({
+      id: txnId,
       witness,
     });
   },
@@ -117,8 +117,8 @@ export const cap = {
     page = 0,
     witness,
   }: {
-    tokenId: string;
-    userId: string;
+    tokenId: Principal;
+    userId: Principal;
     page?: number;
     witness: boolean;
   }): Promise<GetTransactionsResponseBorrowed> {
