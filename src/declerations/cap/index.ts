@@ -4,9 +4,7 @@ import { Principal } from "@dfinity/principal";
 
 import { routerFactory } from "./router.did.js";
 import _ROUTER_SERVICE, {
-  GetTokenContractRootBucketArg,
   GetTokenContractRootBucketResponse,
-  GetUserRootBucketsArg,
   GetUserRootBucketsResponse,
 } from "./router";
 
@@ -16,11 +14,13 @@ import _ROOT_SERVICE, {
   GetTransactionsArg,
   GetTransactionsResponseBorrowed,
   GetUserTransactionsArg,
-  WithIdArg,
 } from "./root";
 
-export const rootActor = async (): Promise<ActorSubclass<_ROOT_SERVICE>> => {
-  const agent = new HttpAgent({ host: "https://ic0.app", fetch });
+export const rootActor = async (
+  canisterId: Principal
+): Promise<ActorSubclass<_ROOT_SERVICE>> => {
+  // const agent = new HttpAgent({ host: "https://ic0.app", fetch });
+  const agent = new HttpAgent({ host: "http://localhost:8000", fetch });
 
   if (process.env.NODE_ENV !== "production") {
     agent.fetchRootKey().catch((err) => {
@@ -33,14 +33,15 @@ export const rootActor = async (): Promise<ActorSubclass<_ROOT_SERVICE>> => {
 
   return Actor.createActor(rootFactory, {
     agent,
-    canisterId: "aanaa-xaaaa-aaaah-aaeiq-cai",
+    canisterId,
   });
 };
 
 export const routerActor = async (): Promise<
   ActorSubclass<_ROUTER_SERVICE>
 > => {
-  const agent = new HttpAgent({ host: "https://ic0.app", fetch });
+  // const agent = new HttpAgent({ host: "https://ic0.app", fetch });
+  const agent = new HttpAgent({ host: "http://localhost:8000", fetch });
 
   if (process.env.NODE_ENV !== "production") {
     agent.fetchRootKey().catch((err) => {
@@ -53,7 +54,7 @@ export const routerActor = async (): Promise<
 
   return Actor.createActor(routerFactory, {
     agent,
-    canisterId: "aanaa-xaaaa-aaaah-aaeiq-cai",
+    canisterId: "rrkah-fqaaa-aaaaa-aaaaq-cai",
   });
 };
 
@@ -61,37 +62,73 @@ export const cap = {
   /**
    * Router Canister
    */
-  async get_token_contract_root_bucket(
-    args: GetTokenContractRootBucketArg
-  ): Promise<GetTokenContractRootBucketResponse> {
-    return (await routerActor()).get_token_contract_root_bucket(args);
+  async get_token_contract_root_bucket({
+    tokenId,
+    witness,
+  }: {
+    tokenId: string;
+    witness: boolean;
+  }): Promise<GetTokenContractRootBucketResponse> {
+    return (await routerActor()).get_token_contract_root_bucket({
+      canister: Principal.fromText(tokenId),
+      witness,
+    });
   },
   async get_user_root_buckets(
-    args: GetUserRootBucketsArg
+    user: string,
+    witness: boolean
   ): Promise<GetUserRootBucketsResponse> {
-    return (await routerActor()).get_user_root_buckets(args);
+    return (await routerActor()).get_user_root_buckets({
+      user: Principal.fromText(user),
+      witness,
+    });
   },
 
   /**
    * Root Canister
    */
-  async get_transaction(args: WithIdArg): Promise<GetTransactionResponse> {
-    return (await rootActor()).get_transaction(args);
-  },
-  async get_transactions(
-    args: GetTransactionsArg
-  ): Promise<GetTransactionsResponseBorrowed> {
-    return (await rootActor()).get_transactions(args);
-  },
-  async get_user_transactions(
-    user: Principal,
-    witness: boolean,
-    page?: number
-  ): Promise<GetTransactionsResponseBorrowed> {
-    return (await rootActor()).get_user_transactions({
-      ...(page && { page: [page] }),
-      user,
+  async get_transaction(
+    tokenId: string,
+    txnId: number,
+    witness: boolean
+  ): Promise<GetTransactionResponse> {
+    return (await rootActor(Principal.fromText(tokenId))).get_transaction({
+      id: BigInt(txnId),
       witness,
-    } as GetUserTransactionsArg);
+    });
+  },
+  async get_transactions({
+    tokenId,
+    witness,
+    page,
+  }: {
+    tokenId: string;
+    witness: boolean;
+    page?: number;
+  }): Promise<GetTransactionsResponseBorrowed> {
+    return (await rootActor(Principal.fromText(tokenId))).get_transactions({
+      page: page ? [page] : [],
+      witness,
+    } as GetTransactionsArg);
+  },
+  async get_user_transactions({
+    tokenId,
+    userId,
+    page = 0,
+    witness,
+  }: {
+    tokenId: string;
+    userId: string;
+    page?: number;
+    witness: boolean;
+  }): Promise<GetTransactionsResponseBorrowed> {
+    console.log(page);
+    return (await rootActor(Principal.fromText(tokenId))).get_user_transactions(
+      {
+        page: page ? [page] : [],
+        user: Principal.fromText(userId),
+        witness,
+      } as GetUserTransactionsArg
+    );
   },
 };
