@@ -122,7 +122,6 @@ export const cap = {
     page?: number;
     witness: boolean;
   }): Promise<GetTransactionsResponseBorrowed> {
-    console.log(page);
     return (await rootActor(Principal.fromText(tokenId))).get_user_transactions(
       {
         page: page ? [page] : [],
