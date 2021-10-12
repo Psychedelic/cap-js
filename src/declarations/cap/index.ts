@@ -16,11 +16,19 @@ import _ROOT_SERVICE, {
   GetUserTransactionsArg,
 } from "./root";
 
+interface HttpAgentArg {
+  host: string,
+  fetch: any,
+}
+
 export const rootActor = async (
   canisterId: Principal
 ): Promise<ActorSubclass<_ROOT_SERVICE>> => {
   // const agent = new HttpAgent({ host: "https://ic0.app", fetch });
-  const agent = new HttpAgent({ host: "http://localhost:8000", fetch });
+  const agent = new HttpAgent({
+    host: "http://localhost:8000",
+    fetch,
+  } as HttpAgentArg);
 
   if (process.env.NODE_ENV !== "production") {
     agent.fetchRootKey().catch((err) => {
@@ -41,7 +49,10 @@ export const routerActor = async (): Promise<
   ActorSubclass<_ROUTER_SERVICE>
 > => {
   // const agent = new HttpAgent({ host: "https://ic0.app", fetch });
-  const agent = new HttpAgent({ host: "http://localhost:8000", fetch });
+  const agent = new HttpAgent({
+    host: "http://localhost:8000",
+    fetch,
+  } as HttpAgentArg);
 
   if (process.env.NODE_ENV !== "production") {
     agent.fetchRootKey().catch((err) => {
