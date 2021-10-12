@@ -1,2 +1,2 @@
-export * from "./declerations/cap/router";
-export { cap } from "./declerations/cap";
+export * from "./declarations/cap/router";
+export { cap } from "./declarations/cap";
