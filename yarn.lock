@@ -332,6 +332,11 @@
     js-sha256 "0.9.0"
     simple-cbor "^0.4.1"
 
+"@dfinity/candid@^0.10.1":
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/@dfinity/candid/-/candid-0.10.1.tgz#f93d7cdc3856a6d527f31c7112a0537ef70ba315"
+  integrity sha512-Z7C125quoAYafj+yK20KQKI/MkXgB9tgPkvtIk1Ec8eGXIU7OXOHSIknvJR6zXdE9eUc/veiD4+VDWK7I82sDw==
+
 "@dfinity/principal@^0.10.1":
   version "0.10.1"
   resolved "https://registry.yarnpkg.com/@dfinity/principal/-/principal-0.10.1.tgz#2472aa0eef8b46000394720ef40bbd4bd330c000"

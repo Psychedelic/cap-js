@@ -1,4 +1,4 @@
-export const routerFactory = ({ IDL }) => {
+export const routerFactory = ({ IDL }: { IDL: any }) => {
   const WithWitnessArg = IDL.Record({ witness: IDL.Bool });
   const Witness = IDL.Record({
     certificate: IDL.Vec(IDL.Nat8),
@@ -44,4 +44,4 @@ export const routerFactory = ({ IDL }) => {
     install_bucket_code: IDL.Func([IDL.Principal], [], []),
   });
 };
-export const init = ({ IDL }) => [];
+export const init = () => [];

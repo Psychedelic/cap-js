@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { Actor, ActorSubclass, HttpAgent } from "@dfinity/agent";
+import { Actor, ActorSubclass, HttpAgent, HttpAgentOptions } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 
 import { routerFactory } from "./router.did.js";
@@ -20,7 +20,10 @@ export const rootActor = async (
   canisterId: Principal
 ): Promise<ActorSubclass<_ROOT_SERVICE>> => {
   // const agent = new HttpAgent({ host: "https://ic0.app", fetch });
-  const agent = new HttpAgent({ host: "http://localhost:8000", fetch });
+  const agent = new HttpAgent({
+    host: "http://localhost:8000",
+    fetch,
+  } as unknown as HttpAgentOptions);
 
   if (process.env.NODE_ENV !== "production") {
     agent.fetchRootKey().catch((err) => {
@@ -41,7 +44,10 @@ export const routerActor = async (): Promise<
   ActorSubclass<_ROUTER_SERVICE>
 > => {
   // const agent = new HttpAgent({ host: "https://ic0.app", fetch });
-  const agent = new HttpAgent({ host: "http://localhost:8000", fetch });
+  const agent = new HttpAgent({
+    host: "http://localhost:8000",
+    fetch,
+  } as unknown as HttpAgentOptions);
 
   if (process.env.NODE_ENV !== "production") {
     agent.fetchRootKey().catch((err) => {
