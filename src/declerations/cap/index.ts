@@ -66,11 +66,11 @@ export const cap = {
     tokenId,
     witness,
   }: {
-    tokenId: string;
+    tokenId: Principal;
     witness: boolean;
   }): Promise<GetTokenContractRootBucketResponse> {
     return (await routerActor()).get_token_contract_root_bucket({
-      canister: Principal.fromText(tokenId),
+      canister: tokenId,
       witness,
     });
   },
@@ -102,11 +102,11 @@ export const cap = {
     witness,
     page,
   }: {
-    tokenId: string;
+    tokenId: Principal;
     witness: boolean;
     page?: number;
   }): Promise<GetTransactionsResponseBorrowed> {
-    return (await rootActor(Principal.fromText(tokenId))).get_transactions({
+    return (await rootActor(tokenId)).get_transactions({
       page: page ? [page] : [],
       witness,
     } as GetTransactionsArg);
@@ -122,10 +122,10 @@ export const cap = {
     page?: number;
     witness: boolean;
   }): Promise<GetTransactionsResponseBorrowed> {
-    return (await rootActor(Principal.fromText(tokenId))).get_user_transactions(
+    return (await rootActor(tokenId)).get_user_transactions(
       {
         page: page ? [page] : [],
-        user: Principal.fromText(userId),
+        user: userId,
         witness,
       } as GetUserTransactionsArg
     );

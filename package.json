@@ -1,6 +1,6 @@
 {
   "name": "@psychedelic/cap-js",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "type": "module",
   "description": "Cap client library",
   "engines": {
@@ -21,7 +21,6 @@
     "prepublish": "yarn build",
     "typecheck": "tsc --noEmit",
     "test": "cross-env NODE_ENV=dev jest",
-    "coverage": "nyc --reporter lcov yarn test",
     "lint": "eslint src --ext ts",
     "lint:fix": "eslint src --fix --ext ts && prettier --write \"./src/**/*.{ts,tsx,js,jsx}\"",
     "format": "prettier --write \"./src/**/*.{ts,tsx,js,jsx}\"",
