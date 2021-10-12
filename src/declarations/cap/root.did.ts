@@ -1,4 +1,4 @@
-export const rootFactory = ({ IDL }) => {
+export const rootFactory = ({ IDL }: { IDL: any }) => {
   const WithIdArg = IDL.Record({ id: IDL.Nat64, witness: IDL.Bool });
   const Witness = IDL.Record({
     certificate: IDL.Vec(IDL.Nat8),
@@ -78,4 +78,4 @@ export const rootFactory = ({ IDL }) => {
     time: IDL.Func([], [IDL.Nat64], ["query"]),
   });
 };
-export const init = ({ IDL }) => [];
+export const init = () => [];
