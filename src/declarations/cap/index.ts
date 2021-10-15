@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+import fetch from "cross-fetch";
 import { Actor, ActorSubclass, HttpAgent, HttpAgentOptions } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 
@@ -80,10 +80,13 @@ export const cap = {
       witness,
     });
   },
-  async get_user_root_buckets(
+  async get_user_root_buckets({
+    user,
+    witness,
+  }: {
     user: string,
-    witness: boolean
-  ): Promise<GetUserRootBucketsResponse> {
+    witness: boolean,
+  }): Promise<GetUserRootBucketsResponse> {
     return (await routerActor()).get_user_root_buckets({
       user: Principal.fromText(user),
       witness,
