@@ -6,7 +6,7 @@
     "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
   },
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "./src/declarations/cap/index.d.ts",
   "browser": "dist/index.js",
   "author": "b0xtch",
   "license": "MIT",
