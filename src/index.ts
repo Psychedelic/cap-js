@@ -16,6 +16,28 @@ import _ROOT_SERVICE, {
   GetUserTransactionsArg,
 } from "./declarations/cap/root";
 
+export {
+  Root,
+  Event,
+  GetBucketResponse,
+  GetNextCanistersResponse,
+  GetTransactionResponse,
+  GetTransactionsArg,
+  GetTransactionsResponseBorrowed,
+  GetUserTransactionsArg,
+  IndefiniteEvent,
+  Operation,
+  WithIdArg,
+  WithWitnessArg,
+  Witness,
+  Router,
+  GetIndexCanistersResponse,
+  GetTokenContractRootBucketArg,
+  GetTokenContractRootBucketResponse,
+  GetUserRootBucketsArg,
+  GetUserRootBucketsResponse,
+} from "./declarations/cap";
+
 export const rootActor = async (
   canisterId: Principal
 ): Promise<ActorSubclass<_ROOT_SERVICE>> => {
