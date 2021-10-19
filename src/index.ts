@@ -187,8 +187,8 @@ export class Cap {
   constructor(
     private host: string,
     private canisterId: string,
-    private routerActor: ActorSubclass<_ROUTER_SERVICE>,
-    private rootActor: ActorSubclass<_ROOT_SERVICE>,
+    public routerActor: ActorSubclass<_ROUTER_SERVICE>,
+    public rootActor: ActorSubclass<_ROOT_SERVICE>,
   ) {
     console.log(
       '[debug] placeholders to skip linting warnings on build',
@@ -259,7 +259,7 @@ export class Cap {
     user,
     witness,
   }: {
-    user: string,
+    user: Principal,
     witness: boolean,
   }): Promise<GetUserRootBucketsResponse | void> {
     if (!this.routerActor) {
@@ -268,8 +268,26 @@ export class Cap {
     };
 
     return this.routerActor.get_user_root_buckets({
-      user: Principal.fromText(user),
+      user,
       witness,
     });
+  }
+
+  async get_transactions({
+    witness,
+    page,
+  }: {
+    witness: boolean;
+    page?: number;
+  }): Promise<GetTransactionsResponseBorrowed | void> {
+    if (!this.rootActor) {
+      console.warn('Oops! The router actor was not instantiated yet');
+      return;
+    };
+
+    return this.rootActor.get_transactions({
+      page: page ? [page] : [],
+      witness,
+    } as GetTransactionsArg);
   }
 }
