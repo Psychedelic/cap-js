@@ -1,5 +1,10 @@
 import fetch from "cross-fetch";
-import { Actor, ActorSubclass, HttpAgent, HttpAgentOptions } from "@dfinity/agent";
+import {
+  Actor,
+  ActorSubclass,
+  HttpAgent,
+  HttpAgentOptions,
+} from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 
 import { routerFactory } from "./declarations/cap/router.did.js";
@@ -38,6 +43,16 @@ export {
   GetUserRootBucketsResponse,
 } from "./declarations/cap";
 
+export const Hosts = {
+  mainnet: 'https://ic0.app',
+  local: 'http://localhost:8000',
+};
+
+// TODO: Temporary used as a reference while refactoring
+export const Canisters = {
+  local: "rrkah-fqaaa-aaaaa-aaaaq-cai",
+}
+
 export const rootActor = async (
   canisterId: Principal
 ): Promise<ActorSubclass<_ROOT_SERVICE>> => {
@@ -61,6 +76,11 @@ export const rootActor = async (
     canisterId,
   });
 };
+
+export interface ActorParams {
+  host: string,
+  canisterId: string,
+}
 
 export const routerActor = async (): Promise<
   ActorSubclass<_ROUTER_SERVICE>
@@ -162,3 +182,94 @@ export const cap = {
     );
   },
 };
+
+export class Cap {
+  constructor(
+    private host: string,
+    private canisterId: string,
+    private routerActor: ActorSubclass<_ROUTER_SERVICE>,
+    private rootActor: ActorSubclass<_ROOT_SERVICE>,
+  ) {
+    console.log(
+      '[debug] placeholders to skip linting warnings on build',
+      this.host,
+      this.canisterId,
+      typeof this.rootActor,
+    )
+  }
+
+  static async createActor<T>({
+    host,
+    canisterId,
+    idlFactory,
+  }: {
+    host: string,
+    canisterId: string,
+    idlFactory: ({ IDL }: { IDL: any; }) => any,
+  }): Promise<ActorSubclass<T>> {
+    const agent = new HttpAgent({
+      host,
+      fetch,
+    } as unknown as HttpAgentOptions);
+
+    if (process.env.NODE_ENV !== "production") {
+      try {
+        agent.fetchRootKey();
+      } catch (err) {
+        console.warn('Oops! Unable to fetch root key, is the local replica running?');
+        console.error(err);
+      }
+    }
+
+    return Actor.createActor(idlFactory, {
+      agent,
+      canisterId,
+    });
+  }
+
+  static init ({
+    host,
+    canisterId,
+  }: ActorParams) {
+    return (async () => {
+      const routerActor = await Cap.createActor<_ROUTER_SERVICE>({
+        host,
+        canisterId,
+        idlFactory: routerFactory,
+      });
+
+      const rootActor = await Cap.createActor<_ROOT_SERVICE>({
+        host,
+        canisterId,
+        idlFactory: rootFactory,
+      });
+
+      const cap = new Cap(
+        host,
+        canisterId,
+        routerActor,
+        rootActor,
+      );
+
+      return cap;
+    })();
+  }
+
+  async get_user_root_buckets({
+    user,
+    witness,
+  }: {
+    user: string,
+    witness: boolean,
+  }): Promise<GetUserRootBucketsResponse | void> {
+    if (!this.routerActor) {
+      console.warn('Oops! The router actor was not instantiated yet');
+      return;
+    };
+
+    return this.routerActor.get_user_root_buckets({
+      user: Principal.fromText(user),
+      witness,
+    });
+  }
+}
