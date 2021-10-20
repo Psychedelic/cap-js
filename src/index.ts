@@ -5,11 +5,19 @@ import {
   HttpAgent,
   HttpAgentOptions,
 } from "@dfinity/agent";
+import { Principal } from "@dfinity/principal";
 
 import _ROUTER_SERVICE from "./declarations/cap/router";
 import _ROOT_SERVICE from "./declarations/cap/root";
 import { routerFactory } from "./declarations/cap/router.did.js";
 import { rootFactory } from "./declarations/cap/root.did.js";
+
+import {
+  GetUserRootBucketsResponse,
+  GetTokenContractRootBucketResponse,
+  GetTransactionResponse,
+  GetTransactionsResponseBorrowed,
+} from "./declarations/cap";
 
 export {
   Root,
@@ -102,11 +110,7 @@ export class CapBase <T>{
         idlFactory,
       });
 
-      const cap = new CapBase<T>(
-        actor,
-      );
-
-      return cap;
+      return actor;
     })();
   }
 }
@@ -120,12 +124,46 @@ export class CapRouter extends CapBase <_ROUTER_SERVICE>{
     canisterId: string,
   }) {
     return (async () => {
-      return await CapBase.inititalise<_ROUTER_SERVICE>({
+      const actor = await CapBase.inititalise<_ROUTER_SERVICE>({
         host,
         canisterId,
         idlFactory: routerFactory,
-      })
+      });
+
+      const cap = new CapRouter(
+        actor,
+      );
+
+      return cap;
     })();
+  }
+
+  // TODO: Best to use the Actor direclty, no point on this method wrappers
+  async get_token_contract_root_bucket({
+    tokenId,
+    witness,
+  }: {
+    tokenId: Principal;
+    witness: boolean;
+  }): Promise<GetTokenContractRootBucketResponse> {
+    return this.actor.get_token_contract_root_bucket({
+      canister: tokenId,
+      witness,
+    });
+  }
+
+  // TODO: Best to use the Actor direclty, no point on this method wrappers
+  async get_user_root_buckets({
+    user,
+    witness,
+  }: {
+    user: Principal,
+    witness: boolean,
+  }): Promise<GetUserRootBucketsResponse> {
+    return this.actor.get_user_root_buckets({
+      user,
+      witness,
+    });
   }
 }
 
@@ -138,11 +176,42 @@ export class CapRoot extends CapBase <_ROOT_SERVICE>{
     canisterId: string,
   }) {
     return (async () => {
-      return await CapBase.inititalise<_ROOT_SERVICE>({
+      const actor = await CapBase.inititalise<_ROOT_SERVICE>({
         host,
         canisterId,
         idlFactory: rootFactory,
-      })
+      });
+
+      const cap = new CapRoot(
+        actor,
+      );
+
+      return cap;
     })();
+  }
+
+  // TODO: Best to use the Actor direclty, no point on this method wrappers
+  async get_transaction(
+    id: bigint,
+    witness: boolean
+  ): Promise<GetTransactionResponse> {
+    return this.actor.get_transaction({
+      id,
+      witness,
+    });
+  }
+
+  // TODO: Best to use the Actor direclty, no point on this method wrappers
+  async get_transactions({
+    witness,
+    page,
+  }: {
+    witness: boolean;
+    page?: number;
+  }): Promise<GetTransactionsResponseBorrowed> {
+    return this.actor.get_transactions({
+      page: page ? [page] : [],
+      witness,
+    });
   }
 }
