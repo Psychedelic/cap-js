@@ -262,20 +262,6 @@ console.log(transaction);
 | ---- | ----------- |
 | `GetTransactionsResponseBorrowed` | An object returning an array of `data` as well as the page queried. If witness = `true` the certified response will be appended to the response |
 
-### `cap.get_user_transactions(({page, witness})`
-> Get all user transactions for the token contract
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| page | [number?](#number?) | The optional `number` of the page to query for transctions, each page can hold up to 64 transactions. Defaults to page `0`. |
-| witness | [boolean?](#boolean?) | The optional `witness` for the Certified response |
-
-#### Returns
-
-| Type | Description |
-| ---- | ----------- |
-| `GetTransactionsResponseBorrowed` | An object returning an array of `data` as well as the page queried. If witness = `true` the certified response will be appended to the response |
-
 #### Example
 
 ```JavaScript
@@ -308,6 +294,20 @@ console.log(tokenTxns);
 - If no `page` param provided, we will query the first page, this is oppposite to what the main canister does which is query the last page transactions.
 
 
+### `cap.get_user_transactions(({page, witness})`
+> Get all user transactions for the token contract
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| page | [number?](#number?) | The optional `number` of the page to query for transctions, each page can hold up to 64 transactions. Defaults to page `0`. |
+| witness | [boolean?](#boolean?) | The optional `witness` for the Certified response |
+
+#### Returns
+
+| Type | Description |
+| ---- | ----------- |
+| `GetTransactionsResponseBorrowed` | An object returning an array of `data` as well as the page queried. If witness = `true` the certified response will be appended to the response |
+
 ### `cap.get_user_transactions({tokenId, userId, page, witness})`
 > Get all transactions for the provide `user`
 
@@ -319,7 +319,6 @@ console.log(tokenTxns);
 | user | [Principal](#principal) | The `user` Id of the requested transactions 
 | page | [number?](#number?) | The optional `number` of the page to query for transctions, each page can hold up to 64 transactions. Defaults to page `0`. |
 | witness | [boolean](#boolean) | Certified response |
-
 
 #### Returns
 
@@ -358,6 +357,35 @@ console.log(userTxns);
 }
 ```
 
+### `cap.insert({to, fee, from, memo, operation, caller, amount})`
+> Insert a transaction event to the token contract
+
+  to: Principal;
+  fee: bigint;
+  from: [] | [Principal];
+  memo: number;
+  time: bigint;
+  operation: Operation;
+  caller: Principal;
+  amount: bigint;
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| amount | [amount](#amount) |
+| caller | [principal](#principal) |
+| fee | [bigint](#bigint) |
+| from | [principal](#principal) |
+| memo | [memo](#memo) |
+| operation | [operation](#operation) |
+| to | [principal](#principal) |
+
+#### Returns
+
+| Type | Description |
+| ---- | ----------- |
+| `Promise<bigint>` | a number |
+
+
 #### Notes
 - If no `page` param provided, we will query the first page, this is oppposite to what the main canister does which is query the last page transactions.
 
@@ -365,9 +393,6 @@ console.log(userTxns);
 > ToDo
 
 ### `cap.get_next_canisters({})`
-> ToDo
-
-### `cap.insert([options])`
 > ToDo
 
   time : () -> (nat64) query;

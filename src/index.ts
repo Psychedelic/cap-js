@@ -18,6 +18,7 @@ import {
   GetTransactionResponse,
   GetTransactionsResponseBorrowed,
   GetIndexCanistersResponse,
+  IndefiniteEvent,
 } from "./declarations/cap";
 
 export {
@@ -254,6 +255,27 @@ export class CapRoot extends CapBase <_ROOT_SERVICE>{
       page: page ? [page] : [],
       user,
       witness,
+    })
+  }
+
+  // TODO: Best to use the Actor direclty, no point on this method wrappers
+  public async insert({
+    to,
+    fee,
+    from,
+    memo,
+    operation,
+    caller,
+    amount,
+  }: IndefiniteEvent): Promise<bigint> {
+    return this.actor.insert({
+      to,
+      fee,
+      from,
+      memo,
+      operation,
+      caller,
+      amount,
     })
   }
 }
