@@ -17,6 +17,7 @@ import {
   GetTokenContractRootBucketResponse,
   GetTransactionResponse,
   GetTransactionsResponseBorrowed,
+  GetIndexCanistersResponse,
 } from "./declarations/cap";
 
 export {
@@ -138,8 +139,19 @@ export class CapRouter extends CapBase <_ROUTER_SERVICE>{
     })();
   }
 
-  // TODO: Best to use the Actor direclty, no point on this method wrappers
-  async get_token_contract_root_bucket({
+  // TODO: Isn't it best to use the Actor directly? no point on this method wrappers
+  public async get_index_canisters({
+    witness = false,
+  }: {
+    witness?: boolean,
+  }): Promise<GetIndexCanistersResponse> {
+    return this.actor.get_index_canisters({
+      witness,
+    })
+  }
+
+  // TODO: Isn't it best to use the Actor directly? no point on this method wrappers
+  public async get_token_contract_root_bucket({
     tokenId,
     witness,
   }: {
@@ -152,8 +164,8 @@ export class CapRouter extends CapBase <_ROUTER_SERVICE>{
     });
   }
 
-  // TODO: Best to use the Actor direclty, no point on this method wrappers
-  async get_user_root_buckets({
+  // TODO: Isn't it best to use the Actor directly? no point on this method wrappers
+  public async get_user_root_buckets({
     user,
     witness,
   }: {
@@ -164,6 +176,19 @@ export class CapRouter extends CapBase <_ROUTER_SERVICE>{
       user,
       witness,
     });
+  }
+
+  // TODO: Isn't it best to use the Actor directly? no point on this method wrappers
+  public async insert_new_users(
+    contractId: Principal,
+    users: Principal[],
+  ): Promise<undefined> {
+    return this.actor.insert_new_users(contractId, users);
+  }
+
+  // TODO: Isn't it best to use the Actor directly? no point on this method wrappers
+  public async install_bucket_code(canisterId: Principal) {
+    return this.actor.install_bucket_code(canisterId);
   }
 }
 
@@ -191,7 +216,7 @@ export class CapRoot extends CapBase <_ROOT_SERVICE>{
   }
 
   // TODO: Best to use the Actor direclty, no point on this method wrappers
-  async get_transaction(
+  public async get_transaction(
     id: bigint,
     witness: boolean
   ): Promise<GetTransactionResponse> {
@@ -202,7 +227,7 @@ export class CapRoot extends CapBase <_ROOT_SERVICE>{
   }
 
   // TODO: Best to use the Actor direclty, no point on this method wrappers
-  async get_transactions({
+  public async get_transactions({
     witness,
     page,
   }: {

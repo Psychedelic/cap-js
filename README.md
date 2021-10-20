@@ -64,7 +64,7 @@ yarn add @psychedelic/cap-js
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| witness | [boolean](#boolean) | Certified response |
+| witness | [boolean?](#boolean?) | The optional Certified response, defaults to `false` |
 
 #### Returns
 
@@ -155,8 +155,21 @@ console.log(userRootBucket);
 }
 ```
 
-### `cap.insert_new_users([options])`
-> ToDo
+### `cap.insert_new_users(contractId, users)`
+> insert new users for a token contract
+
+#### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| contractId | [Principal](#principal) | The token `contract` Id |
+| users | [Array of Principal](#array_of_principal) | A list of user `principal` |
+
+#### Returns
+
+| Type | Description |
+| ---- | ----------- |
+| `Promise<undefined>` | an empty response `()` |
 
 ### `cap.install_bucket_code(principal)`
 > instantiate a new bucket canister for a token
