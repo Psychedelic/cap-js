@@ -228,15 +228,32 @@ export class CapRoot extends CapBase <_ROOT_SERVICE>{
 
   // TODO: Best to use the Actor direclty, no point on this method wrappers
   public async get_transactions({
-    witness,
+    witness = false,
     page,
   }: {
-    witness: boolean;
+    witness?: boolean;
     page?: number;
   }): Promise<GetTransactionsResponseBorrowed> {
     return this.actor.get_transactions({
       page: page ? [page] : [],
       witness,
     });
+  }
+
+  // TODO: Best to use the Actor direclty, no point on this method wrappers
+  public async get_user_transactions({
+    page,
+    user,
+    witness = false,
+  }: {
+    page?: number,
+    user: Principal,
+    witness?: boolean,
+  }): Promise<GetTransactionsResponseBorrowed> {
+    return this.actor.get_user_transactions({
+      page: page ? [page] : [],
+      user,
+      witness,
+    })
   }
 }

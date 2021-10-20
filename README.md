@@ -204,15 +204,14 @@ dfx canister info r7inp-6aaaa-aaaaa-aaabq-cai
 
 ### Root Canister
 
-### `cap.get_transaction({tokenId, txnId, witness})`
-> Return a specifc transaction based on global `txnId` from a token contract (tokenId)
+### `cap.get_transaction({txnId, witness})`
+> Return a specifc transaction based on global transaction `Id` from a token contract (tokenId)
 
 #### Parameters
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| tokenId | [bigint](#bigint) | The `tokenId` of the contract to be queried for the transaction |
-| txnId | [bigint](#bigint) | The global txnId of a transaction to return |
+| id | [bigint](#bigint) | The global txnId of a transaction to return |
 | witness | [boolean](#boolean) | Certified response |
 
 #### Returns
@@ -247,16 +246,29 @@ console.log(transaction);
 - Unstable endpoint
 
 
-### `cap.get_transactions({tokenId, page, witness})`
+### `cap.get_transactions({page, witness})`
 > Get all transactions for a single token contract
 
 #### Parameters
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| tokenId | [Principal](#principal) | The `tokenId` of the contract to be querid for the transactions |
 | page | [number?](#number?) | The optional `number` of the page to query for transctions, each page can hold up to 64 transactions. Defaults to page `0`. |
-| witness | [boolean](#boolean) | Certified response |
+| witness | [boolean?](#boolean?) | The optional `witness` for the Certified response |
+
+#### Returns
+
+| Type | Description |
+| ---- | ----------- |
+| `GetTransactionsResponseBorrowed` | An object returning an array of `data` as well as the page queried. If witness = `true` the certified response will be appended to the response |
+
+### `cap.get_user_transactions(({page, witness})`
+> Get all user transactions for the token contract
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| page | [number?](#number?) | The optional `number` of the page to query for transctions, each page can hold up to 64 transactions. Defaults to page `0`. |
+| witness | [boolean?](#boolean?) | The optional `witness` for the Certified response |
 
 #### Returns
 
