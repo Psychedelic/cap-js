@@ -43,16 +43,17 @@ export {
   GetUserRootBucketsResponse,
 } from "./declarations/cap";
 
+import {
+  CanisterInfo,
+  DFX_JSON_HISTORY_ROUTER_KEY_NAME,
+} from './config';
+
+export { CanisterInfo };
+
 export const Hosts = {
   mainnet: 'https://ic0.app',
   local: 'http://localhost:8000',
 };
-
-// TODO: Temporary used as a reference while refactoring
-export const Canisters = {
-  mainnet: "rrkah-fqaaa-aaaaa-aaaaq-cai",
-  local: "rrkah-fqaaa-aaaaa-aaaaq-cai",
-}
 
 type IdlFactory = ({ IDL }: { IDL: any; }) => any;
 
@@ -120,7 +121,7 @@ export class CapBase <T>{
 export class CapRouter extends CapBase <_ROUTER_SERVICE>{
   public static init({
     host = Hosts.mainnet,
-    canisterId = Canisters.mainnet,
+    canisterId = CanisterInfo[DFX_JSON_HISTORY_ROUTER_KEY_NAME].mainnet,
   }: {
     host?: string,
     canisterId: string,

@@ -99,8 +99,17 @@ Also, there's a `Hosts` object that can be used to retrieve defaults:
 ```js
 import { Hosts } from '@psychedelic/cap-js';
 
-// The IC History Router's Canister Id in the Mainnet
-const ICHistoryRouterCanisterId = Hosts.mainnet;
+// The Mainnet
+const mainnetHost = Hosts.mainnet;
+```
+
+Similarily, a CAP `CanisterInfo` object is available that provides defaults:
+
+```js
+import { CanisterInfo } from '@psychedelic/cap-js';
+
+// The `ic-history-router` mainnet canister id
+const ICHistoryRouterCanisterId = CanisterInfo['ic-history-router'].mainnet;
 ```
 
 ### Router Canister
