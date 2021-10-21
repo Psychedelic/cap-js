@@ -94,6 +94,15 @@ const getCapRouterInstance = async ({
 
 💡 The root `canister id` and `host` can be computed by an environment variable. Although, these parameters can be omited and the `mainnet` values are set by default.
 
+Also, there's a `Hosts` object that can be used to retrieve defaults:
+
+```js
+import { Hosts } from '@psychedelic/cap-js';
+
+// The IC History Router's Canister Id in the Mainnet
+const ICHistoryRouterCanisterId = Hosts.mainnet;
+```
+
 ### Router Canister
 
 ### `capRouter.get_index_canisters(witness)`
