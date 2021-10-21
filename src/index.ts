@@ -1,20 +1,25 @@
 import fetch from "cross-fetch";
-import { Actor, ActorSubclass, HttpAgent, HttpAgentOptions } from "@dfinity/agent";
+import {
+  Actor,
+  ActorSubclass,
+  HttpAgent,
+  HttpAgentOptions,
+} from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 
+import _ROUTER_SERVICE from "./declarations/cap/router";
+import _ROOT_SERVICE from "./declarations/cap/root";
 import { routerFactory } from "./declarations/cap/router.did.js";
-import _ROUTER_SERVICE, {
-  GetTokenContractRootBucketResponse,
-  GetUserRootBucketsResponse,
-} from "./declarations/cap/router";
-
 import { rootFactory } from "./declarations/cap/root.did.js";
-import _ROOT_SERVICE, {
+
+import {
+  GetUserRootBucketsResponse,
+  GetTokenContractRootBucketResponse,
   GetTransactionResponse,
-  GetTransactionsArg,
   GetTransactionsResponseBorrowed,
-  GetUserTransactionsArg,
-} from "./declarations/cap/root";
+  GetIndexCanistersResponse,
+  IndefiniteEvent,
+} from "./declarations/cap";
 
 export {
   Root,
@@ -38,127 +43,240 @@ export {
   GetUserRootBucketsResponse,
 } from "./declarations/cap";
 
-export const rootActor = async (
-  canisterId: Principal
-): Promise<ActorSubclass<_ROOT_SERVICE>> => {
-  // const agent = new HttpAgent({ host: "https://ic0.app", fetch });
-  const agent = new HttpAgent({
-    host: "http://localhost:8000",
-    fetch,
-  } as unknown as HttpAgentOptions);
+import {
+  CanisterInfo,
+  DFX_JSON_HISTORY_ROUTER_KEY_NAME,
+} from './config';
 
-  if (process.env.NODE_ENV !== "production") {
-    agent.fetchRootKey().catch((err) => {
-      console.warn(
-        "Unable to fetch root key. Check to ensure that your local replica is running"
-      );
-      console.error(err);
-    });
+export { CanisterInfo };
+
+export const Hosts = {
+  mainnet: 'https://ic0.app',
+  local: 'http://localhost:8000',
+};
+
+type IdlFactory = ({ IDL }: { IDL: any; }) => any;
+
+export interface ActorParams {
+  host: string,
+  canisterId: string,
+  idlFactory: IdlFactory,
+}
+
+export class CapBase <T>{
+  public actor: ActorSubclass<T>;
+
+  constructor(
+    actor: ActorSubclass<T>,
+  ) {
+    this.actor = actor;
   }
 
-  return Actor.createActor(rootFactory, {
-    agent,
+  private static async createActor<T>({
+    host,
     canisterId,
-  });
-};
+    idlFactory,
+  }: {
+    host: string,
+    canisterId: string,
+    idlFactory: IdlFactory,
+  }): Promise<ActorSubclass<T>> {
+    const agent = new HttpAgent({
+      host,
+      fetch,
+    } as unknown as HttpAgentOptions);
 
-export const routerActor = async (): Promise<
-  ActorSubclass<_ROUTER_SERVICE>
-> => {
-  // const agent = new HttpAgent({ host: "https://ic0.app", fetch });
-  const agent = new HttpAgent({
-    host: "http://localhost:8000",
-    fetch,
-  } as unknown as HttpAgentOptions);
+    if (process.env.NODE_ENV !== "production") {
+      try {
+        agent.fetchRootKey();
+      } catch (err) {
+        console.warn('Oops! Unable to fetch root key, is the local replica running?');
+        console.error(err);
+      }
+    }
 
-  if (process.env.NODE_ENV !== "production") {
-    agent.fetchRootKey().catch((err) => {
-      console.warn(
-        "Unable to fetch root key. Check to ensure that your local replica is running"
-      );
-      console.error(err);
+    return Actor.createActor(idlFactory, {
+      agent,
+      canisterId,
     });
   }
 
-  return Actor.createActor(routerFactory, {
-    agent,
-    canisterId: "rrkah-fqaaa-aaaaa-aaaaq-cai",
-  });
-};
+  public static inititalise <T>({
+    host,
+    canisterId,
+    idlFactory,
+  }: ActorParams) {
+    return (async () => {
+      const actor = await CapBase.createActor<T>({
+        host,
+        canisterId,
+        idlFactory,
+      });
 
-export const cap = {
-  /**
-   * Router Canister
-   */
-  async get_token_contract_root_bucket({
+      return actor;
+    })();
+  }
+}
+
+export class CapRouter extends CapBase <_ROUTER_SERVICE>{
+  public static init({
+    host = Hosts.mainnet,
+    canisterId = CanisterInfo[DFX_JSON_HISTORY_ROUTER_KEY_NAME].mainnet,
+  }: {
+    host?: string,
+    canisterId: string,
+  }) {
+    return (async () => {
+      const actor = await CapBase.inititalise<_ROUTER_SERVICE>({
+        host,
+        canisterId,
+        idlFactory: routerFactory,
+      });
+
+      const cap = new CapRouter(
+        actor,
+      );
+
+      return cap;
+    })();
+  }
+
+  // TODO: Isn't it best to use the Actor directly? no point on this method wrappers
+  public async get_index_canisters({
+    witness = false,
+  }: {
+    witness?: boolean,
+  }): Promise<GetIndexCanistersResponse> {
+    return this.actor.get_index_canisters({
+      witness,
+    })
+  }
+
+  // TODO: Isn't it best to use the Actor directly? no point on this method wrappers
+  public async get_token_contract_root_bucket({
     tokenId,
     witness,
   }: {
     tokenId: Principal;
     witness: boolean;
   }): Promise<GetTokenContractRootBucketResponse> {
-    return (await routerActor()).get_token_contract_root_bucket({
+    return this.actor.get_token_contract_root_bucket({
       canister: tokenId,
       witness,
     });
-  },
-  async get_user_root_buckets({
+  }
+
+  // TODO: Isn't it best to use the Actor directly? no point on this method wrappers
+  public async get_user_root_buckets({
     user,
     witness,
   }: {
-    user: string,
+    user: Principal,
     witness: boolean,
   }): Promise<GetUserRootBucketsResponse> {
-    return (await routerActor()).get_user_root_buckets({
-      user: Principal.fromText(user),
+    return this.actor.get_user_root_buckets({
+      user,
       witness,
     });
-  },
+  }
 
-  /**
-   * Root Canister
-   */
-  async get_transaction(
-    tokenId: Principal,
-    txnId: bigint,
+  // TODO: Isn't it best to use the Actor directly? no point on this method wrappers
+  public async insert_new_users(
+    contractId: Principal,
+    users: Principal[],
+  ): Promise<undefined> {
+    return this.actor.insert_new_users(contractId, users);
+  }
+
+  // TODO: Isn't it best to use the Actor directly? no point on this method wrappers
+  public async install_bucket_code(canisterId: Principal) {
+    return this.actor.install_bucket_code(canisterId);
+  }
+}
+
+export class CapRoot extends CapBase <_ROOT_SERVICE>{
+  public static init({
+    host = Hosts.mainnet,
+    canisterId,
+  }: {
+    host?: string,
+    canisterId: string,
+  }) {
+    return (async () => {
+      const actor = await CapBase.inititalise<_ROOT_SERVICE>({
+        host,
+        canisterId,
+        idlFactory: rootFactory,
+      });
+
+      const cap = new CapRoot(
+        actor,
+      );
+
+      return cap;
+    })();
+  }
+
+  // TODO: Best to use the Actor direclty, no point on this method wrappers
+  public async get_transaction(
+    id: bigint,
     witness: boolean
   ): Promise<GetTransactionResponse> {
-    return (await rootActor(tokenId)).get_transaction({
-      id: txnId,
+    return this.actor.get_transaction({
+      id,
       witness,
     });
-  },
-  async get_transactions({
-    tokenId,
-    witness,
+  }
+
+  // TODO: Best to use the Actor direclty, no point on this method wrappers
+  public async get_transactions({
+    witness = false,
     page,
   }: {
-    tokenId: Principal;
-    witness: boolean;
+    witness?: boolean;
     page?: number;
   }): Promise<GetTransactionsResponseBorrowed> {
-    return (await rootActor(tokenId)).get_transactions({
+    return this.actor.get_transactions({
       page: page ? [page] : [],
       witness,
-    } as GetTransactionsArg);
-  },
-  async get_user_transactions({
-    tokenId,
-    userId,
-    page = 0,
-    witness,
+    });
+  }
+
+  // TODO: Best to use the Actor direclty, no point on this method wrappers
+  public async get_user_transactions({
+    page,
+    user,
+    witness = false,
   }: {
-    tokenId: Principal;
-    userId: Principal;
-    page?: number;
-    witness: boolean;
+    page?: number,
+    user: Principal,
+    witness?: boolean,
   }): Promise<GetTransactionsResponseBorrowed> {
-    return (await rootActor(tokenId)).get_user_transactions(
-      {
-        page: page ? [page] : [],
-        user: userId,
-        witness,
-      } as GetUserTransactionsArg
-    );
-  },
-};
+    return this.actor.get_user_transactions({
+      page: page ? [page] : [],
+      user,
+      witness,
+    })
+  }
+
+  // TODO: Best to use the Actor direclty, no point on this method wrappers
+  public async insert({
+    to,
+    fee,
+    from,
+    memo,
+    operation,
+    caller,
+    amount,
+  }: IndefiniteEvent): Promise<bigint> {
+    return this.actor.insert({
+      to,
+      fee,
+      from,
+      memo,
+      operation,
+      caller,
+      amount,
+    })
+  }
+}
