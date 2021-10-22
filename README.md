@@ -150,7 +150,7 @@ console.log(indexCanisters);
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | canister | [Principal](#boolean) | The `canister` Id of the requested root bucket |
-| witness | [boolean](#boolean) | Certified response |
+| witness | [boolean?](#boolean?) | The optional `witness` for the Certified response |
 
 #### Returns
 
@@ -182,7 +182,7 @@ console.log(tokenRootBucket);
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | user | [Principal](#principal) | The `user` Id of the requested root bucket |
-| witness | [boolean](#boolean) | Certified response |
+| witness | [boolean?](#boolean?) | The optional `witness` for the Certified response |
 
 #### Returns
 
@@ -263,7 +263,7 @@ dfx canister info r7inp-6aaaa-aaaaa-aaabq-cai
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | id | [bigint](#bigint) | The global txnId of a transaction to return |
-| witness | [boolean](#boolean) | Certified response |
+| witness | [boolean?](#boolean?) | The optional `witness` for the Certified response |
 
 #### Returns
 
