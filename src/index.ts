@@ -124,7 +124,7 @@ export class CapRouter extends CapBase <_ROUTER_SERVICE>{
     canisterId = CanisterInfo[DFX_JSON_HISTORY_ROUTER_KEY_NAME].mainnet,
   }: {
     host?: string,
-    canisterId: string,
+    canisterId?: string,
   }) {
     return (async () => {
       const actor = await CapBase.inititalise<_ROUTER_SERVICE>({
