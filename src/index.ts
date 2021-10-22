@@ -155,10 +155,10 @@ export class CapRouter extends CapBase <_ROUTER_SERVICE>{
   // TODO: Isn't it best to use the Actor directly? no point on this method wrappers
   public async get_token_contract_root_bucket({
     tokenId,
-    witness,
+    witness = false,
   }: {
     tokenId: Principal;
-    witness: boolean;
+    witness?: boolean;
   }): Promise<GetTokenContractRootBucketResponse> {
     return this.actor.get_token_contract_root_bucket({
       canister: tokenId,
@@ -169,10 +169,10 @@ export class CapRouter extends CapBase <_ROUTER_SERVICE>{
   // TODO: Isn't it best to use the Actor directly? no point on this method wrappers
   public async get_user_root_buckets({
     user,
-    witness,
+    witness = false,
   }: {
     user: Principal,
-    witness: boolean,
+    witness?: boolean,
   }): Promise<GetUserRootBucketsResponse> {
     return this.actor.get_user_root_buckets({
       user,
@@ -220,7 +220,7 @@ export class CapRoot extends CapBase <_ROOT_SERVICE>{
   // TODO: Best to use the Actor direclty, no point on this method wrappers
   public async get_transaction(
     id: bigint,
-    witness: boolean
+    witness = false,
   ): Promise<GetTransactionResponse> {
     return this.actor.get_transaction({
       id,
