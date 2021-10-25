@@ -33,11 +33,12 @@ export class KyaRestApi extends EventEmitter implements KyaApi {
   }
 
   public async request(req: RequestArgs): Promise<unknown> {
+    const params = new URLSearchParams(req.params);
     const options: AxiosRequestConfig = {
       method: "get",
-      url: this.url,
+      url: `${this.url}/${req.path}`,
       headers: this.headers,
-      ...req.params,
+      ...params && ({ params: params.toString() })
     };
 
     let resp: AxiosResponse;

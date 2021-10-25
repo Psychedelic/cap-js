@@ -1,5 +1,5 @@
 export interface RequestArgs {
-  readonly method: string;
+  readonly path: string;
   readonly params?: readonly unknown[];
 }
 

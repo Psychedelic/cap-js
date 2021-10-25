@@ -1,5 +1,8 @@
 export default {};
 
+//kyasshu 
+export const KYA_URL = "http://localhost:3000/dev/cap";
+
 // To edit or maintain
 export const DFX_JSON_HISTORY_ROUTER_KEY_NAME = "ic-history-router";
 const IC_HISTORY_ROUTER_CANISTER_ID_MAINNET = "rrkah-fqaaa-aaaaa-aaaaq-cai";

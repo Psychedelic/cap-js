@@ -6,6 +6,7 @@ import {
   HttpAgentOptions,
 } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
+import { KyaRestApi } from './kyasshu';
 
 import _ROUTER_SERVICE from "./declarations/cap/router";
 import _ROOT_SERVICE from "./declarations/cap/root";
@@ -43,7 +44,7 @@ export {
   GetUserRootBucketsResponse,
 } from "./declarations/cap";
 
-import { CanisterInfo, DFX_JSON_HISTORY_ROUTER_KEY_NAME } from "./config";
+import { CanisterInfo, DFX_JSON_HISTORY_ROUTER_KEY_NAME, KYA_URL } from "./config";
 
 export { CanisterInfo };
 
@@ -63,8 +64,11 @@ export interface ActorParams {
 export class CapBase<T> {
   public actor: ActorSubclass<T>;
 
+  public cache: KyaRestApi;
+
   constructor(actor: ActorSubclass<T>) {
     this.actor = actor;
+    this.cache = new KyaRestApi({ url: KYA_URL });
   }
 
   private static async createActor<T>({
