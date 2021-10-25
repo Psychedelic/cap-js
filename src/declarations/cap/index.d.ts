@@ -14,7 +14,6 @@ export {
   Witness,
 } from "./root";
 
-
 export {
   default as Router,
   GetIndexCanistersResponse,
