@@ -43,32 +43,27 @@ export {
   GetUserRootBucketsResponse,
 } from "./declarations/cap";
 
-import {
-  CanisterInfo,
-  DFX_JSON_HISTORY_ROUTER_KEY_NAME,
-} from './config';
+import { CanisterInfo, DFX_JSON_HISTORY_ROUTER_KEY_NAME } from "./config";
 
 export { CanisterInfo };
 
 export const Hosts = {
-  mainnet: 'https://ic0.app',
-  local: 'http://localhost:8000',
+  mainnet: "https://ic0.app",
+  local: "http://localhost:8000",
 };
 
-type IdlFactory = ({ IDL }: { IDL: any; }) => any;
+type IdlFactory = ({ IDL }: { IDL: any }) => any;
 
 export interface ActorParams {
-  host: string,
-  canisterId: string,
-  idlFactory: IdlFactory,
+  host: string;
+  canisterId: string;
+  idlFactory: IdlFactory;
 }
 
-export class CapBase <T>{
+export class CapBase<T> {
   public actor: ActorSubclass<T>;
 
-  constructor(
-    actor: ActorSubclass<T>,
-  ) {
+  constructor(actor: ActorSubclass<T>) {
     this.actor = actor;
   }
 
@@ -77,9 +72,9 @@ export class CapBase <T>{
     canisterId,
     idlFactory,
   }: {
-    host: string,
-    canisterId: string,
-    idlFactory: IdlFactory,
+    host: string;
+    canisterId: string;
+    idlFactory: IdlFactory;
   }): Promise<ActorSubclass<T>> {
     const agent = new HttpAgent({
       host,
@@ -90,7 +85,9 @@ export class CapBase <T>{
       try {
         agent.fetchRootKey();
       } catch (err) {
-        console.warn('Oops! Unable to fetch root key, is the local replica running?');
+        console.warn(
+          "Oops! Unable to fetch root key, is the local replica running?"
+        );
         console.error(err);
       }
     }
@@ -101,11 +98,7 @@ export class CapBase <T>{
     });
   }
 
-  public static inititalise <T>({
-    host,
-    canisterId,
-    idlFactory,
-  }: ActorParams) {
+  public static inititalise<T>({ host, canisterId, idlFactory }: ActorParams) {
     return (async () => {
       const actor = await CapBase.createActor<T>({
         host,
@@ -118,13 +111,13 @@ export class CapBase <T>{
   }
 }
 
-export class CapRouter extends CapBase <_ROUTER_SERVICE>{
+export class CapRouter extends CapBase<_ROUTER_SERVICE> {
   public static init({
     host = Hosts.mainnet,
     canisterId = CanisterInfo[DFX_JSON_HISTORY_ROUTER_KEY_NAME].mainnet,
   }: {
-    host?: string,
-    canisterId?: string,
+    host?: string;
+    canisterId?: string;
   }) {
     return (async () => {
       const actor = await CapBase.inititalise<_ROUTER_SERVICE>({
@@ -133,26 +126,22 @@ export class CapRouter extends CapBase <_ROUTER_SERVICE>{
         idlFactory: routerFactory,
       });
 
-      const cap = new CapRouter(
-        actor,
-      );
+      const cap = new CapRouter(actor);
 
       return cap;
     })();
   }
 
-  // TODO: Isn't it best to use the Actor directly? no point on this method wrappers
   public async get_index_canisters({
     witness = false,
   }: {
-    witness?: boolean,
+    witness?: boolean;
   }): Promise<GetIndexCanistersResponse> {
     return this.actor.get_index_canisters({
       witness,
-    })
+    });
   }
 
-  // TODO: Isn't it best to use the Actor directly? no point on this method wrappers
   public async get_token_contract_root_bucket({
     tokenId,
     witness = false,
@@ -166,13 +155,12 @@ export class CapRouter extends CapBase <_ROUTER_SERVICE>{
     });
   }
 
-  // TODO: Isn't it best to use the Actor directly? no point on this method wrappers
   public async get_user_root_buckets({
     user,
     witness = false,
   }: {
-    user: Principal,
-    witness?: boolean,
+    user: Principal;
+    witness?: boolean;
   }): Promise<GetUserRootBucketsResponse> {
     return this.actor.get_user_root_buckets({
       user,
@@ -180,27 +168,25 @@ export class CapRouter extends CapBase <_ROUTER_SERVICE>{
     });
   }
 
-  // TODO: Isn't it best to use the Actor directly? no point on this method wrappers
   public async insert_new_users(
     contractId: Principal,
-    users: Principal[],
+    users: Principal[]
   ): Promise<undefined> {
     return this.actor.insert_new_users(contractId, users);
   }
 
-  // TODO: Isn't it best to use the Actor directly? no point on this method wrappers
   public async install_bucket_code(canisterId: Principal) {
     return this.actor.install_bucket_code(canisterId);
   }
 }
 
-export class CapRoot extends CapBase <_ROOT_SERVICE>{
+export class CapRoot extends CapBase<_ROOT_SERVICE> {
   public static init({
     host = Hosts.mainnet,
     canisterId,
   }: {
-    host?: string,
-    canisterId: string,
+    host?: string;
+    canisterId: string;
   }) {
     return (async () => {
       const actor = await CapBase.inititalise<_ROOT_SERVICE>({
@@ -209,18 +195,15 @@ export class CapRoot extends CapBase <_ROOT_SERVICE>{
         idlFactory: rootFactory,
       });
 
-      const cap = new CapRoot(
-        actor,
-      );
+      const cap = new CapRoot(actor);
 
       return cap;
     })();
   }
 
-  // TODO: Best to use the Actor direclty, no point on this method wrappers
   public async get_transaction(
     id: bigint,
-    witness = false,
+    witness = false
   ): Promise<GetTransactionResponse> {
     return this.actor.get_transaction({
       id,
@@ -228,7 +211,6 @@ export class CapRoot extends CapBase <_ROOT_SERVICE>{
     });
   }
 
-  // TODO: Best to use the Actor direclty, no point on this method wrappers
   public async get_transactions({
     witness = false,
     page,
@@ -242,41 +224,33 @@ export class CapRoot extends CapBase <_ROOT_SERVICE>{
     });
   }
 
-  // TODO: Best to use the Actor direclty, no point on this method wrappers
   public async get_user_transactions({
     page,
     user,
     witness = false,
   }: {
-    page?: number,
-    user: Principal,
-    witness?: boolean,
+    page?: number;
+    user: Principal;
+    witness?: boolean;
   }): Promise<GetTransactionsResponseBorrowed> {
     return this.actor.get_user_transactions({
       page: page ? [page] : [],
       user,
       witness,
-    })
+    });
   }
 
-  // TODO: Best to use the Actor direclty, no point on this method wrappers
   public async insert({
-    to,
-    fee,
-    from,
-    memo,
+    status,
     operation,
+    details,
     caller,
-    amount,
   }: IndefiniteEvent): Promise<bigint> {
     return this.actor.insert({
-      to,
-      fee,
-      from,
-      memo,
+      status,
       operation,
+      details,
       caller,
-      amount,
-    })
+    });
   }
 }
