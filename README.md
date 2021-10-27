@@ -8,39 +8,55 @@
 
 ## Table of Contents 
 
+- [Table of Contents](#table-of-contents)
 - [Getting Started](#getting-started)
-  - [Install](#install)
+	- [Install](#install)
 - [Usage](#usage)
-    - [`cap.get_index_canisters(witness)`](#capget_index_canisters-witness)
-	    - [Parameters](#parameters)
+	- [Router Canister](#router-canister)
+	- [`capRouter.get_index_canisters(witness)`](#caprouterget_index_canisterswitness)
+		- [Parameters](#parameters)
 		- [Returns](#returns)
 		- [Example](#example)
-    - [`cap.get_token_contract_root_bucket({canister, witness})`](#capget_token_contract_root_bucketcanister-witness)
+	- [`capRouter.get_token_contract_root_bucket({canister, witness})`](#caprouterget_token_contract_root_bucketcanister-witness)
 		- [Parameters](#parameters-1)
 		- [Returns](#returns-1)
 		- [Example](#example-1)
-    - [`cap.get_user_root_buckets({user, witness})`](#capget_user_root_bucketsuser-witness)
+	- [`capRouter.get_user_root_buckets({user, witness})`](#caprouterget_user_root_bucketsuser-witness)
 		- [Parameters](#parameters-2)
 		- [Returns](#returns-2)
 		- [Example](#example-2)
-    - [`cap.install_bucket_code(principal)`](#capinstall_bucket_codeprincipal)
+	- [`capRouter.insert_new_users(contractId, users)`](#caprouterinsert_new_userscontractid-users)
 		- [Parameters](#parameters-3)
 		- [Returns](#returns-3)
-		- [Example](#example-3)
-    - [`cap.get_transaction({tokenId, txnId, witness})`](#capget_transactiontokenId-txnId-witness)
+	- [`capRouter.install_bucket_code(principal)`](#caprouterinstall_bucket_codeprincipal)
 		- [Parameters](#parameters-4)
 		- [Returns](#returns-4)
-		- [Example](#example-4)
-    - [`cap.get_transactions({tokenId, page, witness})`](#capget_transactionstokenId-page-witness) 
+		- [Example](#example-3)
+		- [Notes](#notes)
+	- [Root Canister](#root-canister)
+	- [`capRoot.get_transaction(id, witness)`](#caprootget_transactionid-witness)
 		- [Parameters](#parameters-5)
 		- [Returns](#returns-5)
-		- [Example](#example-5)
-    - [`cap.get_user_transactions({tokenId, userId, page, witness})`](#capget_user_transactionstokenId-userId-page-witness) 
+		- [Example](#example-4)
+		- [Notes](#notes-1)
+	- [`capRoot.get_transactions({page, witness})`](#caprootget_transactionspage-witness)
 		- [Parameters](#parameters-6)
 		- [Returns](#returns-6)
+		- [Example](#example-5)
+		- [Notes](#notes-2)
+	- [`capRoot.get_user_transactions(({page, user, witness})`](#caprootget_user_transactionspage-user-witness)
+		- [Returns](#returns-7)
 		- [Example](#example-6)
-  - [API](#api)
+	- [`capRoot.insert({to, fee, from, memo, operation, caller, amount})`](#caprootinsertto-fee-from-memo-operation-caller-amount)
+		- [Returns](#returns-8)
+		- [Notes](#notes-3)
+	- [`capRoot.get_bucket_for({})`](#caprootget_bucket_for)
+	- [`capRoot.get_next_canisters({})`](#caprootget_next_canisters)
+	- [`capRoot.time([options])`](#caproottimeoptions)
+	- [API](#api)
+- [Roadmap](#roadmap)
 - [Testing](#testing)
+- [Roadmap](#roadmap-1)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -110,6 +126,20 @@ import { CanisterInfo } from '@psychedelic/cap-js';
 
 // The `ic-history-router` mainnet canister id
 const ICHistoryRouterCanisterId = CanisterInfo['ic-history-router'].mainnet;
+```
+
+In order to get transactions of a particular token (e.g: XTC token):
+
+```js
+const tokenId = 'aanaa-xaaaa-aaaah-aaeiq-cai'	// XTC Canister Id
+
+const { canister: rootTokenId } = capRouter.get_token_contract_root_bucket({canister: tokenId, witness})
+
+const capRootXTC = await CapRouter.init({
+  canisterId: rootTokenId[0],
+})
+
+const xtcTransactions = await capRootXTC.get_transactions()
 ```
 
 ### Router Canister
