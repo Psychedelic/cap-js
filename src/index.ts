@@ -61,6 +61,22 @@ export interface ActorParams {
   idlFactory: IdlFactory;
 }
 
+interface CreateActorFromTokenParams {
+  tokenId: string;
+  router?: CapRouter;
+}
+
+interface CreateActorFromRootParams {
+  canisterId: string;
+}
+
+interface BaseCreateActorParams {
+  host: string;
+  idlFactory: IdlFactory;
+}
+
+type CreateActorParams = BaseCreateActorParams &
+  (CreateActorFromRootParams | CreateActorFromTokenParams);
 export class CapBase<T> {
   public actor: ActorSubclass<T>;
 
@@ -70,13 +86,9 @@ export class CapBase<T> {
 
   private static async createActor<T>({
     host,
-    canisterId,
     idlFactory,
-  }: {
-    host: string;
-    canisterId: string;
-    idlFactory: IdlFactory;
-  }): Promise<ActorSubclass<T>> {
+    ...args
+  }: CreateActorParams): Promise<ActorSubclass<T>> {
     const agent = new HttpAgent({
       host,
       fetch,
@@ -93,9 +105,23 @@ export class CapBase<T> {
       }
     }
 
+    if ("canisterId" in args) {
+      return Actor.createActor(idlFactory, {
+        agent,
+        canisterId: args.canisterId,
+      });
+    }
+
+    const router = args.router ? args.router : await CapRouter.init({});
+    const { canister } = await router.get_token_contract_root_bucket({
+      tokenId: Principal.fromText(args.tokenId),
+    });
+
+    if (!canister?.[0]) throw Error(`Token ${args.tokenId} not in cap`);
+
     return Actor.createActor(idlFactory, {
       agent,
-      canisterId,
+      canisterId: canister[0],
     });
   }
 
