@@ -1,4 +1,5 @@
 export const rootFactory = ({ IDL }: { IDL: any }) => {
+  const DetailValue = IDL.Rec();
   const WithIdArg = IDL.Record({ id: IDL.Nat64, witness: IDL.Bool });
   const Witness = IDL.Record({
     certificate: IDL.Vec(IDL.Nat8),
@@ -13,21 +14,28 @@ export const rootFactory = ({ IDL }: { IDL: any }) => {
     witness: IDL.Opt(Witness),
     canisters: IDL.Vec(IDL.Principal),
   });
-  const Operation = IDL.Variant({
-    Approve: IDL.Null,
-    Burn: IDL.Null,
-    Mint: IDL.Null,
-    Transfer: IDL.Null,
+  const EventStatus = IDL.Variant({
+    Failed: IDL.Null,
+    Running: IDL.Null,
+    Completed: IDL.Null,
   });
+  DetailValue.fill(
+    IDL.Variant({
+      I64: IDL.Int64,
+      U64: IDL.Nat64,
+      Vec: IDL.Vec(DetailValue),
+      Slice: IDL.Vec(IDL.Nat8),
+      Text: IDL.Text,
+      Float: IDL.Float64,
+      Principal: IDL.Principal,
+    })
+  );
   const Event = IDL.Record({
-    to: IDL.Principal,
-    fee: IDL.Nat64,
-    from: IDL.Opt(IDL.Principal),
-    memo: IDL.Nat32,
+    status: EventStatus,
     time: IDL.Nat64,
-    operation: Operation,
+    operation: IDL.Text,
+    details: IDL.Vec(IDL.Tuple(IDL.Text, DetailValue)),
     caller: IDL.Principal,
-    amount: IDL.Nat64,
   });
   const GetTransactionResponse = IDL.Variant({
     Delegate: IDL.Tuple(IDL.Principal, IDL.Opt(Witness)),
@@ -48,13 +56,10 @@ export const rootFactory = ({ IDL }: { IDL: any }) => {
     witness: IDL.Bool,
   });
   const IndefiniteEvent = IDL.Record({
-    to: IDL.Principal,
-    fee: IDL.Nat64,
-    from: IDL.Opt(IDL.Principal),
-    memo: IDL.Nat32,
-    operation: Operation,
+    status: EventStatus,
+    operation: IDL.Text,
+    details: IDL.Vec(IDL.Tuple(IDL.Text, DetailValue)),
     caller: IDL.Principal,
-    amount: IDL.Nat64,
   });
   return IDL.Service({
     get_bucket_for: IDL.Func([WithIdArg], [GetBucketResponse], ["query"]),
