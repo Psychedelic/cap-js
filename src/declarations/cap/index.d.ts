@@ -1,5 +1,6 @@
 export {
   default as Root,
+  DetailValue,
   Event,
   GetBucketResponse,
   GetNextCanistersResponse,
@@ -8,8 +9,6 @@ export {
   GetTransactionsResponseBorrowed,
   GetUserTransactionsArg,
   IndefiniteEvent,
-  DetailValue,
-  EventStatus,
   WithIdArg,
   WithWitnessArg,
   Witness,
