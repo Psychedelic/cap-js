@@ -4,7 +4,7 @@ import axios, { AxiosResponse, AxiosRequestConfig } from "axios";
 
 export type KyaOptions = { url: string };
 
-export class KyaRestApi extends EventEmitter implements KyaApi {
+export class KyaConnector extends EventEmitter implements KyaApi {
   public url: string;
 
   constructor(protected options: string | KyaOptions) {
@@ -33,12 +33,12 @@ export class KyaRestApi extends EventEmitter implements KyaApi {
   }
 
   public async request(req: RequestArgs): Promise<unknown> {
-    const params = new URLSearchParams(req.params);
+    const params = req.params;
     const options: AxiosRequestConfig = {
       method: "get",
       url: `${this.url}/${req.path}`,
       headers: this.headers,
-      ...params && ({ params: params.toString() })
+      ...(params && { params: Object.assign({}, ...params) }),
     };
 
     let resp: AxiosResponse;

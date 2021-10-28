@@ -6,7 +6,7 @@ import {
   HttpAgentOptions,
 } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
-import { KyaRestApi } from './kyasshu';
+import { KyaConnector } from "./kyasshu";
 
 import _ROUTER_SERVICE from "./declarations/cap/router";
 import _ROOT_SERVICE from "./declarations/cap/root";
@@ -44,7 +44,11 @@ export {
   GetUserRootBucketsResponse,
 } from "./declarations/cap";
 
-import { CanisterInfo, DFX_JSON_HISTORY_ROUTER_KEY_NAME, KYA_URL } from "./config";
+import {
+  CanisterInfo,
+  KyaUrl,
+  DFX_JSON_HISTORY_ROUTER_KEY_NAME,
+} from "./config";
 
 export { CanisterInfo };
 
@@ -64,11 +68,13 @@ export interface ActorParams {
 export class CapBase<T> {
   public actor: ActorSubclass<T>;
 
-  public cache: KyaRestApi;
+  public cache: KyaConnector | undefined;
 
-  constructor(actor: ActorSubclass<T>) {
+  constructor(actor: ActorSubclass<T>, cache?: KyaConnector) {
     this.actor = actor;
-    this.cache = new KyaRestApi({ url: KYA_URL });
+    if (cache) {
+      this.cache = cache;
+    }
   }
 
   private static async createActor<T>({
@@ -84,7 +90,6 @@ export class CapBase<T> {
       host,
       fetch,
     } as unknown as HttpAgentOptions);
-
     if (process.env.NODE_ENV !== "production") {
       try {
         agent.fetchRootKey();
@@ -130,7 +135,8 @@ export class CapRouter extends CapBase<_ROUTER_SERVICE> {
         idlFactory: routerFactory,
       });
 
-      const cap = new CapRouter(actor);
+      const cache = new KyaConnector(KyaUrl("dev"));
+      const cap = new CapRouter(actor, cache);
 
       return cap;
     })();
@@ -199,7 +205,9 @@ export class CapRoot extends CapBase<_ROOT_SERVICE> {
         idlFactory: rootFactory,
       });
 
-      const cap = new CapRoot(actor);
+      // ToDo cache flag
+      const cache = new KyaConnector(KyaUrl("dev"));
+      const cap = new CapRoot(actor, cache);
 
       return cap;
     })();
@@ -261,6 +269,19 @@ export class CapRoot extends CapBase<_ROOT_SERVICE> {
       operation,
       caller,
       amount,
+    });
+  }
+
+  public async get_all_user_transactions({
+    user,
+    LastEvaluatedKey,
+  }: {
+    user: Principal;
+    LastEvaluatedKey?: number;
+  }): Promise<unknown> {
+    return this.cache?.request({
+      path: `cap/user/txns/${user.toString()}`,
+      params: [LastEvaluatedKey],
     });
   }
 }
