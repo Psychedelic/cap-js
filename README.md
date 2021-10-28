@@ -1,10 +1,23 @@
 <!-- omit in toc -->
 
-<h1 align="center">Cap-js</h1>
+![](https://storageapi.fleek.co/fleek-team-bucket/logos/capjs.png)
 
-<h3 align="center">The client library for Cap Open Internet Service (OIS).</h3>
+<h1 align="left">Cap-js</h1>
 
-> A client library for the Cap Open Internet Service (OIS), implemented in JavaScript. The interface is based on the candid file [Cap Candid](https://github.com/Psychedelic/cap/tree/main/candid) allowing dApps to interact with the main canister. In addition, this client library will support endpoint caching using Kyasshu.
+<h3 align="center">The client library for CAP - the Open Internet Service (OIS).</h3>
+
+> A client library for the [CAP](https://cap.ooo/) Open Internet Service (OIS), implemented in JavaScript. The interface is based on the candid file [Cap Candid](https://github.com/Psychedelic/cap/tree/main/candid) allowing dApps to interact with the main canister. In addition, this client library will support endpoint caching using Kyasshu.
+
+The CAP-js library is utilized to integrate UIs/FEs/Apps to CAP to **query & surface data** from CAP. Any frontend can query **the transaction/activity history for any Token or NFTs that uses CAP.** (Instead of having to integrate manually with each asset!)
+
+- Visit [our website](https://cap.ooo)
+- Read [our announcement](https://medium.com/@cap_ois/db9bdfe9129f?source=friends_link&sk=924b190ea080ed4e4593fc81396b0a7a)
+- Visit [CAP's main repository](https://github.com/psychedelic/cap)
+- Visit [CAP-SDK repository](https://github.com/Psychedelic/cap/tree/cap-sdk/sdk) 
+
+!!! Important
+
+    CAP is currently in development 🚧 and will release in the first week of November, thus it is not on mainnet or usable yet. You might see our documentation is light on the SDK/Main repo still. We're delayed in this to focus on testing, but will soon update this page with guides & detailed examples for developers.
 
 ## Table of Contents 
 
