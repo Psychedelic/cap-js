@@ -1,15 +1,25 @@
 import type { Principal } from "@dfinity/principal";
+export type DetailValue =
+  | { I64: bigint }
+  | { U64: bigint }
+  | { Vec: Array<DetailValue> }
+  | { Slice: Array<number> }
+  | { Text: string }
+  | { Float: number }
+  | { Principal: Principal };
 
 export interface Event {
-  to: Principal;
-  fee: bigint;
-  from: [] | [Principal];
-  memo: number;
+  status: EventStatus;
   time: bigint;
-  operation: Operation;
+  operation: string;
+  details: Array<[string, DetailValue]>;
   caller: Principal;
-  amount: bigint;
 }
+
+export type EventStatus =
+  | { Failed: null }
+  | { Running: null }
+  | { Completed: null };
 export interface GetBucketResponse {
   witness: [] | [Witness];
   canister: Principal;
@@ -38,19 +48,11 @@ export interface GetUserTransactionsArg {
   witness: boolean;
 }
 export interface IndefiniteEvent {
-  to: Principal;
-  fee: bigint;
-  from: [] | [Principal];
-  memo: number;
-  operation: Operation;
+  status: EventStatus;
+  operation: string;
+  details: Array<[string, DetailValue]>;
   caller: Principal;
-  amount: bigint;
 }
-export type Operation =
-  | { Approve: null }
-  | { Burn: null }
-  | { Mint: null }
-  | { Transfer: null };
 export interface WithIdArg {
   id: bigint;
   witness: boolean;
@@ -62,7 +64,6 @@ export interface Witness {
   certificate: Array<number>;
   tree: Array<number>;
 }
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export default interface _SERVICE {
   get_bucket_for: (arg_0: WithIdArg) => Promise<GetBucketResponse>;
   get_next_canisters: (

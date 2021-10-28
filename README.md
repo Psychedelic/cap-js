@@ -1,46 +1,73 @@
 <!-- omit in toc -->
 
-<h1 align="center">Cap-js</h1>
+![](https://storageapi.fleek.co/fleek-team-bucket/logos/capjs.png)
 
-<h3 align="center">The client library for Cap Open Internet Service (OIS).</h3>
+<h1 align="center">CAP-js</h1>
 
-> A client library for the Cap Open Internet Service (OIS), implemented in JavaScript. The interface is based on the candid file [Cap Candid](https://github.com/Psychedelic/cap/tree/main/candid) allowing dApps to interact with the main canister. In addition, this client library will support endpoint caching using Kyasshu.
+<h3 align="center">The client library for CAP - the Open Internet Service (OIS).</h3>
+
+> A client library for the [CAP](https://cap.ooo/) Open Internet Service (OIS), implemented in JavaScript. The interface is based on the candid file [Cap Candid](https://github.com/Psychedelic/cap/tree/main/candid) allowing dApps to interact with the main canister. In addition, this client library will support endpoint caching using Kyasshu.
+
+The CAP-js library is utilized to integrate UIs/FEs/Apps to CAP to **query & surface data** from CAP. Any frontend can query **the transaction/activity history for any Token or NFTs that uses CAP.** (Instead of having to integrate manually with each asset!)
+
+- Visit [our website](https://cap.ooo)
+- Read [our announcement](https://medium.com/@cap_ois/db9bdfe9129f?source=friends_link&sk=924b190ea080ed4e4593fc81396b0a7a)
+- Visit [CAP's main repository](https://github.com/psychedelic/cap)
+- Visit [CAP-SDK repository](https://github.com/Psychedelic/cap/tree/cap-sdk/sdk) 
+
+>**IMPORTANT:** CAP is currently in development 🚧 and will release in the first week of November, thus it is not on mainnet or usable yet. You might see our documentation is light on the SDK/Main repo still. We're delayed in this to focus on testing, but will soon update this page with guides & detailed examples for developers.
 
 ## Table of Contents 
 
+- [Table of Contents](#table-of-contents)
 - [Getting Started](#getting-started)
-  - [Install](#install)
+	- [Install](#install)
 - [Usage](#usage)
-    - [`cap.get_index_canisters(witness)`](#capget_index_canisters-witness)
-	    - [Parameters](#parameters)
+	- [Router Canister](#router-canister)
+	- [`capRouter.get_index_canisters(witness)`](#caprouterget_index_canisterswitness)
+		- [Parameters](#parameters)
 		- [Returns](#returns)
 		- [Example](#example)
-    - [`cap.get_token_contract_root_bucket({canister, witness})`](#capget_token_contract_root_bucketcanister-witness)
+	- [`capRouter.get_token_contract_root_bucket({canister, witness})`](#caprouterget_token_contract_root_bucketcanister-witness)
 		- [Parameters](#parameters-1)
 		- [Returns](#returns-1)
 		- [Example](#example-1)
-    - [`cap.get_user_root_buckets({user, witness})`](#capget_user_root_bucketsuser-witness)
+	- [`capRouter.get_user_root_buckets({user, witness})`](#caprouterget_user_root_bucketsuser-witness)
 		- [Parameters](#parameters-2)
 		- [Returns](#returns-2)
 		- [Example](#example-2)
-    - [`cap.install_bucket_code(principal)`](#capinstall_bucket_codeprincipal)
+	- [`capRouter.insert_new_users(contractId, users)`](#caprouterinsert_new_userscontractid-users)
 		- [Parameters](#parameters-3)
 		- [Returns](#returns-3)
-		- [Example](#example-3)
-    - [`cap.get_transaction({tokenId, txnId, witness})`](#capget_transactiontokenId-txnId-witness)
+	- [`capRouter.install_bucket_code(principal)`](#caprouterinstall_bucket_codeprincipal)
 		- [Parameters](#parameters-4)
 		- [Returns](#returns-4)
-		- [Example](#example-4)
-    - [`cap.get_transactions({tokenId, page, witness})`](#capget_transactionstokenId-page-witness) 
+		- [Example](#example-3)
+		- [Notes](#notes)
+	- [Root Canister](#root-canister)
+	- [`capRoot.get_transaction(id, witness)`](#caprootget_transactionid-witness)
 		- [Parameters](#parameters-5)
 		- [Returns](#returns-5)
-		- [Example](#example-5)
-    - [`cap.get_user_transactions({tokenId, userId, page, witness})`](#capget_user_transactionstokenId-userId-page-witness) 
+		- [Example](#example-4)
+		- [Notes](#notes-1)
+	- [`capRoot.get_transactions({page, witness})`](#caprootget_transactionspage-witness)
 		- [Parameters](#parameters-6)
 		- [Returns](#returns-6)
+		- [Example](#example-5)
+		- [Notes](#notes-2)
+	- [`capRoot.get_user_transactions(({page, user, witness})`](#caprootget_user_transactionspage-user-witness)
+		- [Returns](#returns-7)
 		- [Example](#example-6)
-  - [API](#api)
+	- [`capRoot.insert({to, fee, from, memo, operation, caller, amount})`](#caprootinsertto-fee-from-memo-operation-caller-amount)
+		- [Returns](#returns-8)
+		- [Notes](#notes-3)
+	- [`capRoot.get_bucket_for({})`](#caprootget_bucket_for)
+	- [`capRoot.get_next_canisters({})`](#caprootget_next_canisters)
+	- [`capRoot.time([options])`](#caproottimeoptions)
+	- [API](#api)
+- [Roadmap](#roadmap)
 - [Testing](#testing)
+- [Roadmap](#roadmap-1)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -110,6 +137,20 @@ import { CanisterInfo } from '@psychedelic/cap-js';
 
 // The `ic-history-router` mainnet canister id
 const ICHistoryRouterCanisterId = CanisterInfo['ic-history-router'].mainnet;
+```
+
+In order to get transactions of a particular token (e.g: XTC token):
+
+```js
+const tokenId = 'aanaa-xaaaa-aaaah-aaeiq-cai'	// XTC Canister Id
+
+const { canister: rootTokenId } = capRouter.get_token_contract_root_bucket({canister: tokenId, witness})
+
+const capRootXTC = await CapRouter.init({
+  canisterId: rootTokenId[0],
+})
+
+const xtcTransactions = await capRootXTC.get_transactions()
 ```
 
 ### Router Canister
