@@ -142,6 +142,30 @@ const capRootXTC = await CapRouter.init({
 const xtcTransactions = await capRootXTC.get_transactions()
 ```
 
+Or
+
+```js
+const tokenId = 'aanaa-xaaaa-aaaah-aaeiq-cai'	// XTC Canister Id
+
+const capRootXTC = await CapRouter.init({ tokenId, router: capRouter })
+
+const xtcTransactions = await capRootXTC.get_transactions()
+```
+
+Or (if you doesn't have an instance of the router)
+
+```js
+const tokenId = 'aanaa-xaaaa-aaaah-aaeiq-cai'	// XTC Canister Id
+
+const capRootXTC = await CapRouter.init({
+	tokenId,
+	routerCanisterId: 'rrkah-fqaaa-aaaaa-aaaaq-cai',
+	hostRouter: 'http://localhost:8000'
+})
+
+const xtcTransactions = await capRootXTC.get_transactions()
+```
+
 ### Router Canister
 
 ### `capRouter.get_index_canisters(witness)`
