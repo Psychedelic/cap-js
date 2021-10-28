@@ -2,7 +2,7 @@
 
 ![](https://storageapi.fleek.co/fleek-team-bucket/logos/capjs.png)
 
-<h1 align="left">Cap-js</h1>
+<h1 align="center">CAP-js</h1>
 
 <h3 align="center">The client library for CAP - the Open Internet Service (OIS).</h3>
 
