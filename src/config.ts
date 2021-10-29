@@ -1,7 +1,9 @@
+import { KyaStage } from "./types";
+
 export default {};
 
 //kyasshu
-export const KyaUrl = (stage: string = "prod") => {
+export const KyaUrl = (stage: KyaStage = "prod") => {
   const resp: { [key: string]: string } = {
     prod: "https://kyasshu-prod.fleek.co",
     dev: "https://kyasshu-dev.fleek.co",

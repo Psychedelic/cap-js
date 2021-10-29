@@ -50,6 +50,7 @@ import {
   KyaUrl,
   DFX_JSON_HISTORY_ROUTER_KEY_NAME,
 } from "./config";
+import { KyaStage } from "./types";
 
 export { CanisterInfo };
 
@@ -268,7 +269,7 @@ export class CapRoot extends CapBase<_ROOT_SERVICE> {
 }
 
 export class CapCache extends CapBase<_ROOT_SERVICE> {
-  constructor(cacheStage?: string) {
+  constructor(cacheStage?: KyaStage) {
     const actor = CapBase.inititalise<_ROOT_SERVICE>({
       host: Hosts.mainnet,
       canisterId: CanisterInfo[DFX_JSON_HISTORY_ROUTER_KEY_NAME].mainnet,
