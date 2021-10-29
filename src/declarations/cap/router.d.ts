@@ -3,28 +3,28 @@ import type { Principal } from "@dfinity/principal";
 export interface GetIndexCanistersResponse {
   'witness' : [] | [Witness],
   'canisters' : Array<Principal>,
-};
+}
 export interface GetTokenContractRootBucketArg {
   'witness' : boolean,
   'canister' : Principal,
-};
+}
 export interface GetTokenContractRootBucketResponse {
   'witness' : [] | [Witness],
   'canister' : [] | [Principal],
-};
+}
 export interface GetUserRootBucketsArg {
   'user' : Principal,
   'witness' : boolean,
-};
+}
 export interface GetUserRootBucketsResponse {
   'witness' : [] | [Witness],
   'contracts' : Array<Principal>,
-};
-export interface WithWitnessArg { 'witness' : boolean };
+}
+export interface WithWitnessArg { 'witness' : boolean }
 export interface Witness {
   'certificate' : Array<number>,
   'tree' : Array<number>,
-};
+}
 export default interface _SERVICE {
   'get_index_canisters' : (arg_0: WithWitnessArg) => Promise<
       GetIndexCanistersResponse
@@ -39,5 +39,5 @@ export default interface _SERVICE {
       undefined
     >,
   'install_bucket_code' : (arg_0: Principal) => Promise<undefined>,
-};
+}
 
