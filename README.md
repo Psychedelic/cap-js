@@ -455,6 +455,56 @@ console.log(userTxns);
 ### `capRoot.time([options])`
 > ToDo
 
+### Kyasshu Layer
+
+### `capRoot.get_all_user_transactions(userId, LastEvaluatedKey)`
+> Return all of the user transactions for `userId`, if `LastEvaluatedKey` is returned, you must provide it in subsequent calls to query the rest of the data.
+
+#### Parameters
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| userId | [principal](#principal) | 	The user Id of the requested transactions |
+| LastEvaluatedKey | [string?](#string?) | The optional `LastEvaluatedKey`, If LastEvaluatedKey is empty, then the "last page" of results has been processed and there is no more data to be retrieved. If LastEvaluatedKey is not empty, it does not necessarily mean that there is more data in the result set. The only way to know when you have reached the end of the result set is when LastEvaluatedKey is empty. |
+
+#### Returns
+
+| Type | Description |
+| ---- | ----------- |
+| `GetTransactionsResponseBorrowed` | An object returning an array of `data` as well as the page queried. If witness = `true` the certified response will be appended to the response |
+
+#### Example
+
+```JavaScript
+const capCache = new CapCache();
+
+const userTxns = await capCache.get_all_user_transactions({
+	user: Principal.from("zxt4e-ian3w-g4ll2-3n5mz-lfqkc-eyj7k-yg6jl-rsbud-f6sft-zdfq3-pae"),
+});
+
+// or
+
+const userTxns = await capCache.get_all_user_transactions({
+	user: Principal.from("zxt4e-ian3w-g4ll2-3n5mz-lfqkc-eyj7k-yg6jl-rsbud-f6sft-zdfq3-pae"),
+	LastEvaluatedKey,
+});
+
+console.log(userTxns);
+```
+```bash
+{
+	Items?: {
+			[key: string]: Event;
+	}[] | undefined;
+	LastEvaluatedKey?: {
+			[key: string]: any;
+	} | undefined;
+}
+```
+
+#### Notes
+- Unstable endpoint
+
 ### API
 
 - ToDo
