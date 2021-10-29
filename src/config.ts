@@ -5,6 +5,7 @@ export const KyaUrl = (stage: string = "prod") => {
   const resp: { [key: string]: string } = {
     prod: "https://kyasshu-prod.fleek.co",
     dev: "https://kyasshu-dev.fleek.co",
+    local: "http://localhost:3000/dev",
   };
 
   return resp[stage];

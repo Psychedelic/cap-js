@@ -476,17 +476,20 @@ console.log(userTxns);
 #### Example
 
 ```JavaScript
-const userTxns = await capRoot.get_all_user_transactions({
- userId: "avesb-mgo2l-ds25i-g7kd4-3he5l-z7ary-3biiq-sojiw-xjgbk-ich5l-mae",
+const capCache = new CapCache();
+
+const userTxns = await capCache.get_all_user_transactions({
+	user: Principal.from("zxt4e-ian3w-g4ll2-3n5mz-lfqkc-eyj7k-yg6jl-rsbud-f6sft-zdfq3-pae"),
 });
 
 // or
-const userTxns = await capRoot.get_all_user_transactions({
- userId: "avesb-mgo2l-ds25i-g7kd4-3he5l-z7ary-3biiq-sojiw-xjgbk-ich5l-mae",
- LastEvaluatedKey: {},
+
+const userTxns = await capCache.get_all_user_transactions({
+	user: Principal.from("zxt4e-ian3w-g4ll2-3n5mz-lfqkc-eyj7k-yg6jl-rsbud-f6sft-zdfq3-pae"),
+	LastEvaluatedKey,
 });
 
-console.log(transaction);
+console.log(userTxns);
 ```
 ```bash
 {
