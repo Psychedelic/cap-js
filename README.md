@@ -502,15 +502,13 @@ console.log(userTxns);
 ```JavaScript
 const capCache = new CapCache();
 
-const userTxns = await capCache.get_all_user_transactions({
+let userTxns = await capCache.get_all_user_transactions({
 	user: Principal.from("zxt4e-ian3w-g4ll2-3n5mz-lfqkc-eyj7k-yg6jl-rsbud-f6sft-zdfq3-pae"),
 });
 
-// or
-
-const userTxns = await capCache.get_all_user_transactions({
+userTxns = await capCache.get_all_user_transactions({
 	user: Principal.from("zxt4e-ian3w-g4ll2-3n5mz-lfqkc-eyj7k-yg6jl-rsbud-f6sft-zdfq3-pae"),
-	LastEvaluatedKey,
+	LastEvaluatedKey: userTxns.LastEvaluatedKey,
 });
 
 console.log(userTxns);
@@ -533,6 +531,10 @@ console.log(userTxns);
 
 - ToDo
   
+## Local Development
+
+- ToDo
+
 ## Roadmap
 
 - Cache every endpoitn with Kyasshu

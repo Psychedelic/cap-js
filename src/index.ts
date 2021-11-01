@@ -314,7 +314,9 @@ export class CapCache extends CapBase<_ROOT_SERVICE> {
   }): Promise<unknown> {
     return this.cache?.request({
       path: `cap/user/txns/${user.toString()}`,
-      params: [LastEvaluatedKey],
+      params: [{
+        LastEvaluatedKey
+      }],
     });
   }
 }
