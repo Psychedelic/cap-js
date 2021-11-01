@@ -146,7 +146,7 @@ const tokenId = 'aanaa-xaaaa-aaaah-aaeiq-cai'	// XTC Canister Id
 
 const { canister: rootTokenId } = capRouter.get_token_contract_root_bucket({canister: tokenId, witness})
 
-const capRootXTC = await CapRouter.init({
+const capRootXTC = await CapRoot.init({
   canisterId: rootTokenId[0],
 })
 
@@ -158,7 +158,7 @@ Or
 ```js
 const tokenId = 'aanaa-xaaaa-aaaah-aaeiq-cai'	// XTC Canister Id
 
-const capRootXTC = await CapRouter.init({ tokenId, router: capRouter })
+const capRootXTC = await CapRoot.init({ tokenId, router: capRouter })
 
 const xtcTransactions = await capRootXTC.get_transactions()
 ```
@@ -168,7 +168,7 @@ Or (if you doesn't have an instance of the router)
 ```js
 const tokenId = 'aanaa-xaaaa-aaaah-aaeiq-cai'	// XTC Canister Id
 
-const capRootXTC = await CapRouter.init({
+const capRootXTC = await CapRoot.init({
 	tokenId,
 	routerCanisterId: 'rrkah-fqaaa-aaaaa-aaaaq-cai',
 	hostRouter: 'http://localhost:8000'
@@ -502,15 +502,13 @@ console.log(userTxns);
 ```JavaScript
 const capCache = new CapCache();
 
-const userTxns = await capCache.get_all_user_transactions({
+let userTxns = await capCache.get_all_user_transactions({
 	user: Principal.from("zxt4e-ian3w-g4ll2-3n5mz-lfqkc-eyj7k-yg6jl-rsbud-f6sft-zdfq3-pae"),
 });
 
-// or
-
-const userTxns = await capCache.get_all_user_transactions({
+userTxns = await capCache.get_all_user_transactions({
 	user: Principal.from("zxt4e-ian3w-g4ll2-3n5mz-lfqkc-eyj7k-yg6jl-rsbud-f6sft-zdfq3-pae"),
-	LastEvaluatedKey,
+	LastEvaluatedKey: userTxns.LastEvaluatedKey,
 });
 
 console.log(userTxns);
@@ -533,6 +531,10 @@ console.log(userTxns);
 
 - ToDo
   
+## Local Development
+
+- ToDo
+
 ## Roadmap
 
 - Cache every endpoitn with Kyasshu

@@ -51,3 +51,5 @@ dfx canister call ic-history-router print_out "()"
 
 # Contract root buckets
 dfx canister call ic-history-router get_token_contract_root_bucket "(record { canister=(principal \"avesb-mgo2l-ds25i-g7kd4-3he5l-z7ary-3biiq-sojiw-xjgbk-ich5l-mae\"); witness=(false:bool)})"
+
+dfx canister --network ic call o3aoo-taaaa-aaaad-qayza-cai get_transactions "(record {page=(0:nat32); witness=(false:bool)})"
