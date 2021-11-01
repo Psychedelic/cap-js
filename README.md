@@ -481,7 +481,7 @@ console.log(userTxns);
 
 ### Kyasshu Layer
 
-### `capRoot.get_all_user_transactions(userId, LastEvaluatedKey)`
+### `capCache.get_all_user_transactions(userId, LastEvaluatedKey)`
 > Return all of the user transactions for `userId`, if `LastEvaluatedKey` is returned, you must provide it in subsequent calls to query the rest of the data.
 
 #### Parameters
