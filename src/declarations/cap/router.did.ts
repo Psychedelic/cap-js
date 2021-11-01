@@ -44,4 +44,3 @@ export const routerFactory = ({ IDL }: { IDL: any }) => {
     install_bucket_code: IDL.Func([IDL.Principal], [], []),
   });
 };
-export const init = () => [];

@@ -32,7 +32,6 @@ export {
   GetUserTransactionsArg,
   IndefiniteEvent,
   DetailValue,
-  EventStatus,
   WithIdArg,
   WithWitnessArg,
   Witness,
@@ -280,13 +279,11 @@ export class CapRoot extends CapBase<_ROOT_SERVICE> {
   }
 
   public async insert({
-    status,
     operation,
     details,
     caller,
   }: IndefiniteEvent): Promise<bigint> {
     return this.actor.insert({
-      status,
       operation,
       details,
       caller,

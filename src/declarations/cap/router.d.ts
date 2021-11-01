@@ -27,7 +27,6 @@ export interface Witness {
   certificate: Array<number>;
   tree: Array<number>;
 }
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export default interface _SERVICE {
   get_index_canisters: (
     arg_0: WithWitnessArg
