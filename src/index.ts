@@ -66,6 +66,35 @@ export interface ActorParams {
   idlFactory: IdlFactory;
 }
 
+type CreateActorFromTokenParams = {
+  tokenId: string;
+  router: CapRouter;
+} |
+{
+  tokenId: string;
+  routerHost?: string;
+  routerCanisterId?: string;
+}
+
+interface CreateActorFromRootParams {
+  canisterId: string;
+}
+
+interface BaseCreateActorParams {
+  host: string;
+  idlFactory: IdlFactory;
+}
+
+interface BaseInitParams {
+  host: string;
+}
+
+type CreateActorParams = BaseCreateActorParams &
+  (CreateActorFromRootParams | CreateActorFromTokenParams);
+
+type InitRootParams = BaseInitParams &
+  (CreateActorFromRootParams | CreateActorFromTokenParams);
+
 export class CapBase<T> {
   public actor: ActorSubclass<T>;
 
@@ -78,15 +107,11 @@ export class CapBase<T> {
     }
   }
 
-  private static createActor<T>({
+  private static async createActor<T>({
     host,
-    canisterId,
     idlFactory,
-  }: {
-    host: string;
-    canisterId: string;
-    idlFactory: IdlFactory;
-  }): ActorSubclass<T> {
+    ...args
+  }: CreateActorParams): Promise<ActorSubclass<T>> {
     const agent = new HttpAgent({
       host,
       fetch,
@@ -102,18 +127,37 @@ export class CapBase<T> {
       }
     }
 
+    if ("canisterId" in args) {
+      return Actor.createActor(idlFactory, {
+        agent,
+        canisterId: args.canisterId,
+      });
+    }
+
+    const router = "router" in args ? args.router : await CapRouter.init({ host: args.routerHost, canisterId: args.routerCanisterId });
+
+    const { canister } = await router.get_token_contract_root_bucket({
+      tokenId: Principal.fromText(args.tokenId),
+    });
+
+    if (!canister?.[0]) throw Error(`Token ${args.tokenId} not in cap`);
+
     return Actor.createActor(idlFactory, {
       agent,
-      canisterId,
+      canisterId: canister[0],
     });
   }
 
-  public static inititalise<T>({ host, canisterId, idlFactory }: ActorParams) {
-    return (() => {
-      const actor = CapBase.createActor<T>({
+  public static inititalise<T>({
+    host,
+    idlFactory,
+    ...args
+  }: CreateActorParams) {
+    return (async () => {
+      const actor = await CapBase.createActor<T>({
         host,
-        canisterId,
         idlFactory,
+        ...args,
       });
 
       return actor;
@@ -129,8 +173,8 @@ export class CapRouter extends CapBase<_ROUTER_SERVICE> {
     host?: string;
     canisterId?: string;
   }) {
-    return (() => {
-      const actor = CapBase.inititalise<_ROUTER_SERVICE>({
+    return (async () => {
+      const actor = await CapBase.inititalise<_ROUTER_SERVICE>({
         host,
         canisterId,
         idlFactory: routerFactory,
@@ -191,18 +235,12 @@ export class CapRouter extends CapBase<_ROUTER_SERVICE> {
 }
 
 export class CapRoot extends CapBase<_ROOT_SERVICE> {
-  public static init({
-    host = Hosts.mainnet,
-    canisterId,
-  }: {
-    host?: string;
-    canisterId: string;
-  }) {
-    return (() => {
-      const actor = CapBase.inititalise<_ROOT_SERVICE>({
+  public static init({ host = Hosts.mainnet, ...args }: InitRootParams) {
+    return (async () => {
+      const actor = await CapBase.inititalise<_ROOT_SERVICE>({
         host,
-        canisterId,
         idlFactory: rootFactory,
+        ...args,
       });
 
       // ToDo cache flag
