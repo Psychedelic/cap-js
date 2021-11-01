@@ -153,6 +153,30 @@ const capRootXTC = await CapRouter.init({
 const xtcTransactions = await capRootXTC.get_transactions()
 ```
 
+Or
+
+```js
+const tokenId = 'aanaa-xaaaa-aaaah-aaeiq-cai'	// XTC Canister Id
+
+const capRootXTC = await CapRouter.init({ tokenId, router: capRouter })
+
+const xtcTransactions = await capRootXTC.get_transactions()
+```
+
+Or (if you doesn't have an instance of the router)
+
+```js
+const tokenId = 'aanaa-xaaaa-aaaah-aaeiq-cai'	// XTC Canister Id
+
+const capRootXTC = await CapRouter.init({
+	tokenId,
+	routerCanisterId: 'rrkah-fqaaa-aaaaa-aaaaq-cai',
+	hostRouter: 'http://localhost:8000'
+})
+
+const xtcTransactions = await capRootXTC.get_transactions()
+```
+
 ### Router Canister
 
 ### `capRouter.get_index_canisters(witness)`
@@ -457,7 +481,7 @@ console.log(userTxns);
 
 ### Kyasshu Layer
 
-### `capRoot.get_all_user_transactions(userId, LastEvaluatedKey)`
+### `capCache.get_all_user_transactions(userId, LastEvaluatedKey)`
 > Return all of the user transactions for `userId`, if `LastEvaluatedKey` is returned, you must provide it in subsequent calls to query the rest of the data.
 
 #### Parameters
@@ -478,15 +502,13 @@ console.log(userTxns);
 ```JavaScript
 const capCache = new CapCache();
 
-const userTxns = await capCache.get_all_user_transactions({
+let userTxns = await capCache.get_all_user_transactions({
 	user: Principal.from("zxt4e-ian3w-g4ll2-3n5mz-lfqkc-eyj7k-yg6jl-rsbud-f6sft-zdfq3-pae"),
 });
 
-// or
-
-const userTxns = await capCache.get_all_user_transactions({
+userTxns = await capCache.get_all_user_transactions({
 	user: Principal.from("zxt4e-ian3w-g4ll2-3n5mz-lfqkc-eyj7k-yg6jl-rsbud-f6sft-zdfq3-pae"),
-	LastEvaluatedKey,
+	LastEvaluatedKey: userTxns.LastEvaluatedKey,
 });
 
 console.log(userTxns);
@@ -509,6 +531,10 @@ console.log(userTxns);
 
 - ToDo
   
+## Local Development
+
+- ToDo
+
 ## Roadmap
 
 - Cache every endpoitn with Kyasshu
