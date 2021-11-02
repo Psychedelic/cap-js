@@ -60,15 +60,16 @@ export interface ActorParams {
   idlFactory: IdlFactory;
 }
 
-type CreateActorFromTokenParams = {
-  tokenId: string;
-  router: CapRouter;
-} |
-{
-  tokenId: string;
-  routerHost?: string;
-  routerCanisterId?: string;
-}
+type CreateActorFromTokenParams =
+  | {
+      tokenId: string;
+      router: CapRouter;
+    }
+  | {
+      tokenId: string;
+      routerHost?: string;
+      routerCanisterId?: string;
+    };
 
 interface CreateActorFromRootParams {
   canisterId: string;
@@ -124,7 +125,13 @@ export class CapBase<T> {
       });
     }
 
-    const router = "router" in args ? args.router : await CapRouter.init({ host: args.routerHost, canisterId: args.routerCanisterId });
+    const router =
+      "router" in args
+        ? args.router
+        : await CapRouter.init({
+            host: args.routerHost,
+            canisterId: args.routerCanisterId,
+          });
 
     const { canister } = await router.get_token_contract_root_bucket({
       tokenId: Principal.fromText(args.tokenId),
