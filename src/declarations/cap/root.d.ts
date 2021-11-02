@@ -1,4 +1,5 @@
 import type { Principal } from "@dfinity/principal";
+
 export type DetailValue =
   | { I64: bigint }
   | { U64: bigint }
@@ -72,5 +73,6 @@ export default interface _SERVICE {
   ) => Promise<GetTransactionsResponseBorrowed>;
   insert: (arg_0: IndefiniteEvent) => Promise<bigint>;
   migrate: (arg_0: Array<Event>) => Promise<undefined>;
+  size: () => Promise<bigint>;
   time: () => Promise<bigint>;
 }

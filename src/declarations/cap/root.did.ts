@@ -76,6 +76,7 @@ export const rootFactory = ({ IDL }: { IDL: any }) => {
     ),
     insert: IDL.Func([IndefiniteEvent], [IDL.Nat64], []),
     migrate: IDL.Func([IDL.Vec(Event)], [], []),
+    size: IDL.Func([], [IDL.Nat64], ["query"]),
     time: IDL.Func([], [IDL.Nat64], ["query"]),
   });
 };

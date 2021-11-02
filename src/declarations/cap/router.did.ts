@@ -25,6 +25,7 @@ export const routerFactory = ({ IDL }: { IDL: any }) => {
     contracts: IDL.Vec(IDL.Principal),
   });
   return IDL.Service({
+    deploy_plug_bucket: IDL.Func([IDL.Principal, IDL.Nat64], [], []),
     get_index_canisters: IDL.Func(
       [WithWitnessArg],
       [GetIndexCanistersResponse],
