@@ -257,7 +257,7 @@ export class CapRoot extends CapBase<_ROOT_SERVICE> {
     page?: number;
   }): Promise<GetTransactionsResponseBorrowed> {
     return this.actor.get_transactions({
-      page: page ? [page] : [],
+      page: typeof page === "number" ? [page] : [],
       witness,
     });
   }
@@ -272,7 +272,7 @@ export class CapRoot extends CapBase<_ROOT_SERVICE> {
     witness?: boolean;
   }): Promise<GetTransactionsResponseBorrowed> {
     return this.actor.get_user_transactions({
-      page: page ? [page] : [],
+      page: typeof page === "number" ? [page] : [],
       user,
       witness,
     });
