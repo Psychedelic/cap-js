@@ -1,25 +1,21 @@
 import type { Principal } from "@dfinity/principal";
+
 export type DetailValue =
   | { I64: bigint }
   | { U64: bigint }
   | { Vec: Array<DetailValue> }
   | { Slice: Array<number> }
   | { Text: string }
+  | { True: null }
+  | { False: null }
   | { Float: number }
   | { Principal: Principal };
-
 export interface Event {
-  status: EventStatus;
   time: bigint;
   operation: string;
   details: Array<[string, DetailValue]>;
   caller: Principal;
 }
-
-export type EventStatus =
-  | { Failed: null }
-  | { Running: null }
-  | { Completed: null };
 export interface GetBucketResponse {
   witness: [] | [Witness];
   canister: Principal;
@@ -48,7 +44,6 @@ export interface GetUserTransactionsArg {
   witness: boolean;
 }
 export interface IndefiniteEvent {
-  status: EventStatus;
   operation: string;
   details: Array<[string, DetailValue]>;
   caller: Principal;
@@ -77,5 +72,7 @@ export default interface _SERVICE {
     arg_0: GetUserTransactionsArg
   ) => Promise<GetTransactionsResponseBorrowed>;
   insert: (arg_0: IndefiniteEvent) => Promise<bigint>;
+  migrate: (arg_0: Array<Event>) => Promise<undefined>;
+  size: () => Promise<bigint>;
   time: () => Promise<bigint>;
 }

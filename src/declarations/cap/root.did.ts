@@ -14,11 +14,6 @@ export const rootFactory = ({ IDL }: { IDL: any }) => {
     witness: IDL.Opt(Witness),
     canisters: IDL.Vec(IDL.Principal),
   });
-  const EventStatus = IDL.Variant({
-    Failed: IDL.Null,
-    Running: IDL.Null,
-    Completed: IDL.Null,
-  });
   DetailValue.fill(
     IDL.Variant({
       I64: IDL.Int64,
@@ -26,12 +21,13 @@ export const rootFactory = ({ IDL }: { IDL: any }) => {
       Vec: IDL.Vec(DetailValue),
       Slice: IDL.Vec(IDL.Nat8),
       Text: IDL.Text,
+      True: IDL.Null,
+      False: IDL.Null,
       Float: IDL.Float64,
       Principal: IDL.Principal,
     })
   );
   const Event = IDL.Record({
-    status: EventStatus,
     time: IDL.Nat64,
     operation: IDL.Text,
     details: IDL.Vec(IDL.Tuple(IDL.Text, DetailValue)),
@@ -56,7 +52,6 @@ export const rootFactory = ({ IDL }: { IDL: any }) => {
     witness: IDL.Bool,
   });
   const IndefiniteEvent = IDL.Record({
-    status: EventStatus,
     operation: IDL.Text,
     details: IDL.Vec(IDL.Tuple(IDL.Text, DetailValue)),
     caller: IDL.Principal,
@@ -79,8 +74,9 @@ export const rootFactory = ({ IDL }: { IDL: any }) => {
       [GetTransactionsResponseBorrowed],
       ["query"]
     ),
-    insert: IDL.Func([IndefiniteEvent], [IDL.Nat64], ["query"]),
+    insert: IDL.Func([IndefiniteEvent], [IDL.Nat64], []),
+    migrate: IDL.Func([IDL.Vec(Event)], [], []),
+    size: IDL.Func([], [IDL.Nat64], ["query"]),
     time: IDL.Func([], [IDL.Nat64], ["query"]),
   });
 };
-export const init = () => [];
