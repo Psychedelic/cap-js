@@ -13,6 +13,15 @@ type PrettyDetail = { [key: string]: DetailType };
 type DetailVector = { Vec: Array<DetailValue> };
 type GeneralValue = { [key: string]: any };
 
+export interface TransactionPrettified {
+  details: PrettyDetail,
+  to?: string;
+  from?: string;
+  caller: Principal;
+  operation: string;
+  time: bigint;
+}
+
 const decodeDetailValue = (value: DetailValue): DetailType => {
   const type = Object.keys(value)?.[0];
   switch (type) {
@@ -27,7 +36,7 @@ const decodeDetailValue = (value: DetailValue): DetailType => {
   }
 };
 
-export const prettifyCapTransactions = (transaction: Event) => {
+export const prettifyCapTransactions = (transaction: Event) : TransactionPrettified => {
   const details = transaction?.details?.reduce<PrettyDetail>(
     (acum, [key, value]) => ({
       ...acum,
@@ -37,8 +46,8 @@ export const prettifyCapTransactions = (transaction: Event) => {
   );
   return {
     details,
-    to: details?.to,
-    from: details?.from,
+    to: details?.to as string,
+    from: details?.from as string,
     caller: transaction.caller,
     operation: transaction.operation,
     time: transaction.time,

@@ -338,4 +338,4 @@ export class CapCache extends CapBase<_ROOT_SERVICE> {
   }
 }
 
-export { prettifyCapTransactions } from "./utils";
+export { prettifyCapTransactions, TransactionPrettified } from "./utils";
