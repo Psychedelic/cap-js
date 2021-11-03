@@ -1,3 +1,5 @@
+export type KyaStage = "prod" | "dev" | "local";
+
 export interface RequestArgs {
   readonly path: string;
   readonly params?: readonly unknown[];

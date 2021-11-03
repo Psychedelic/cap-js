@@ -50,6 +50,7 @@ import {
   KyaUrl,
   DFX_JSON_HISTORY_ROUTER_KEY_NAME,
 } from "./config";
+import { KyaStage } from "./kyasshu/types";
 
 export { CanisterInfo };
 
@@ -112,7 +113,7 @@ export class CapBase<T> {
     host,
     idlFactory,
     ...args
-  }: CreateActorParams): ActorSubclass<T> {
+  }: CreateActorParams): ActorSubclass<T> | Promise<ActorSubclass<T>> {
     const agent = new HttpAgent({
       host,
       fetch,
@@ -135,10 +136,26 @@ export class CapBase<T> {
       });
     }
 
-    return Actor.createActor(idlFactory, {
-      agent,
-      canisterId: args.tokenId,
-    });
+    return (async () => {
+      const router =
+        "router" in args
+          ? args.router
+          : await CapRouter.init({
+              host: args.routerHost,
+              canisterId: args.routerCanisterId,
+            });
+
+      const { canister } = await router.get_token_contract_root_bucket({
+        tokenId: Principal.fromText(args.tokenId),
+      });
+
+      if (!canister?.[0]) throw Error(`Token ${args.tokenId} not in cap`);
+
+      return Actor.createActor<T>(idlFactory, {
+        agent,
+        canisterId: canister[0],
+      });
+    })();
   }
 
   public static inititalise<T>({
@@ -164,15 +181,17 @@ export class CapRouter extends CapBase<_ROUTER_SERVICE> {
     host?: string;
     canisterId?: string;
   }) {
-    const actor = CapBase.inititalise<_ROUTER_SERVICE>({
-      host,
-      canisterId,
-      idlFactory: routerFactory,
-    });
+    return (async () => {
+      const actor = await CapBase.inititalise<_ROUTER_SERVICE>({
+        host,
+        canisterId,
+        idlFactory: routerFactory,
+      });
 
-    const cap = new CapRouter(actor);
+      const cap = new CapRouter(actor);
 
-    return cap;
+      return cap;
+    })();
   }
 
   public async get_index_canisters({
@@ -225,17 +244,16 @@ export class CapRouter extends CapBase<_ROUTER_SERVICE> {
 
 export class CapRoot extends CapBase<_ROOT_SERVICE> {
   public static init({ host = Hosts.mainnet, ...args }: InitRootParams) {
-    const actor = CapBase.inititalise<_ROOT_SERVICE>({
-      host,
-      idlFactory: rootFactory,
-      ...args,
-    });
+    return (async () => {
+      const actor = await CapBase.inititalise<_ROOT_SERVICE>({
+        host,
+        idlFactory: rootFactory,
+        ...args,
+      });
 
-    // ToDo cache flag
-    const cache = new KyaConnector(KyaUrl("dev"));
-    const cap = new CapRoot(actor, cache);
-
-    return cap;
+      const cap = new CapRoot(actor);
+      return cap;
+    })();
   }
 
   public async get_transaction(
@@ -293,12 +311,12 @@ export class CapRoot extends CapBase<_ROOT_SERVICE> {
 }
 
 export class CapCache extends CapBase<_ROOT_SERVICE> {
-  constructor(cacheStage?: string) {
+  constructor(cacheStage: KyaStage = "prod") {
     const actor = CapBase.inititalise<_ROOT_SERVICE>({
       host: Hosts.mainnet,
       canisterId: CanisterInfo[DFX_JSON_HISTORY_ROUTER_KEY_NAME].mainnet,
       idlFactory: rootFactory,
-    });
+    }) as ActorSubclass<_ROOT_SERVICE>;
 
     const cache = new KyaConnector(KyaUrl(cacheStage));
 
