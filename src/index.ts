@@ -7,6 +7,7 @@ import {
 } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 
+import { KyaConnector } from "./kyasshu";
 import _ROUTER_SERVICE from "./declarations/cap/router";
 import _ROOT_SERVICE from "./declarations/cap/root";
 import { routerFactory } from "./declarations/cap/router.did.js";
@@ -43,7 +44,12 @@ export {
   GetUserRootBucketsResponse,
 } from "./declarations/cap";
 
-import { CanisterInfo, DFX_JSON_HISTORY_ROUTER_KEY_NAME } from "./config";
+import {
+  CanisterInfo,
+  KyaUrl,
+  DFX_JSON_HISTORY_ROUTER_KEY_NAME,
+} from "./config";
+import { KyaStage } from "./kyasshu/types";
 
 export { CanisterInfo };
 
@@ -93,20 +99,24 @@ type InitRootParams = BaseInitParams &
 export class CapBase<T> {
   public actor: ActorSubclass<T>;
 
-  constructor(actor: ActorSubclass<T>) {
+  public cache: KyaConnector | undefined;
+
+  constructor(actor: ActorSubclass<T>, cache?: KyaConnector) {
     this.actor = actor;
+    if (cache) {
+      this.cache = cache;
+    }
   }
 
-  private static async createActor<T>({
+  private static createActor<T>({
     host,
     idlFactory,
     ...args
-  }: CreateActorParams): Promise<ActorSubclass<T>> {
+  }: CreateActorParams): ActorSubclass<T> | Promise<ActorSubclass<T>> {
     const agent = new HttpAgent({
       host,
       fetch,
     } as unknown as HttpAgentOptions);
-
     if (process.env.NODE_ENV !== "production") {
       try {
         agent.fetchRootKey();
@@ -125,24 +135,26 @@ export class CapBase<T> {
       });
     }
 
-    const router =
-      "router" in args
-        ? args.router
-        : await CapRouter.init({
-            host: args.routerHost,
-            canisterId: args.routerCanisterId,
-          });
+    return (async () => {
+      const router =
+        "router" in args
+          ? args.router
+          : await CapRouter.init({
+              host: args.routerHost,
+              canisterId: args.routerCanisterId,
+            });
 
-    const { canister } = await router.get_token_contract_root_bucket({
-      tokenId: Principal.fromText(args.tokenId),
-    });
+      const { canister } = await router.get_token_contract_root_bucket({
+        tokenId: Principal.fromText(args.tokenId),
+      });
 
-    if (!canister?.[0]) throw Error(`Token ${args.tokenId} not in cap`);
+      if (!canister?.[0]) throw Error(`Token ${args.tokenId} not in cap`);
 
-    return Actor.createActor(idlFactory, {
-      agent,
-      canisterId: canister[0],
-    });
+      return Actor.createActor<T>(idlFactory, {
+        agent,
+        canisterId: canister[0],
+      });
+    })();
   }
 
   public static inititalise<T>({
@@ -150,15 +162,13 @@ export class CapBase<T> {
     idlFactory,
     ...args
   }: CreateActorParams) {
-    return (async () => {
-      const actor = await CapBase.createActor<T>({
-        host,
-        idlFactory,
-        ...args,
-      });
+    const actor = CapBase.createActor<T>({
+      host,
+      idlFactory,
+      ...args,
+    });
 
-      return actor;
-    })();
+    return actor;
   }
 }
 
@@ -241,7 +251,6 @@ export class CapRoot extends CapBase<_ROOT_SERVICE> {
       });
 
       const cap = new CapRoot(actor);
-
       return cap;
     })();
   }
@@ -294,6 +303,37 @@ export class CapRoot extends CapBase<_ROOT_SERVICE> {
       operation,
       details,
       caller,
+    });
+  }
+}
+
+export class CapCache extends CapBase<_ROOT_SERVICE> {
+  constructor(cacheStage: KyaStage = "prod") {
+    const actor = CapBase.inititalise<_ROOT_SERVICE>({
+      host: Hosts.mainnet,
+      canisterId: CanisterInfo[DFX_JSON_HISTORY_ROUTER_KEY_NAME].mainnet,
+      idlFactory: rootFactory,
+    }) as ActorSubclass<_ROOT_SERVICE>;
+
+    const cache = new KyaConnector(KyaUrl(cacheStage));
+
+    super(actor, cache);
+  }
+
+  public async get_all_user_transactions({
+    user,
+    LastEvaluatedKey,
+  }: {
+    user: Principal;
+    LastEvaluatedKey?: unknown;
+  }): Promise<unknown> {
+    return this.cache?.request({
+      path: `cap/user/txns/${user.toString()}`,
+      params: [
+        {
+          LastEvaluatedKey,
+        },
+      ],
     });
   }
 }
