@@ -27,7 +27,7 @@ const decodeDetailValue = (value: DetailValue): DetailType => {
   }
 };
 
-export const preattifyCapTransactions = (transaction: IndefiniteEvent) => {
+export const prettifyCapTransactions = (transaction: IndefiniteEvent) => {
   const details = transaction?.details?.reduce<PrettyDetail>(
     (acum, [key, value]) => ({
       ...acum,
