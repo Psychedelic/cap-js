@@ -1,5 +1,5 @@
 import { Principal } from "@dfinity/principal";
-import { IndefiniteEvent, DetailValue } from "./declarations/cap/root";
+import { Event, DetailValue } from "./declarations/cap/root";
 
 type DetailType =
   | Principal
@@ -27,7 +27,7 @@ const decodeDetailValue = (value: DetailValue): DetailType => {
   }
 };
 
-export const prettifyCapTransactions = (transaction: IndefiniteEvent) => {
+export const prettifyCapTransactions = (transaction: Event) => {
   const details = transaction?.details?.reduce<PrettyDetail>(
     (acum, [key, value]) => ({
       ...acum,
@@ -41,6 +41,6 @@ export const prettifyCapTransactions = (transaction: IndefiniteEvent) => {
     from: details?.from,
     caller: transaction.caller,
     operation: transaction.operation,
-    // time: transaction.time // TODO: Uncomment this when candid is updated
+    time: transaction.time,
   };
 };
