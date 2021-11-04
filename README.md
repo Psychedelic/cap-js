@@ -178,7 +178,13 @@ const capRootXTC = await CapRoot.init({
 const xtcTransactions = await capRootXTC.get_transactions()
 ```
 
+You're advised to understand [Candid](https://sdk.dfinity.org/docs/candid-guide/candid-intro.html), the interface description language
+for the Dfinity Internet Computer Services, because ultimately, that's where the latest method signatures for the Service endpoints are
+defined, to avoid any typos described in the documentation.
 
+At this point you might be curious to understand why `cap-js` at time of writing is wrapping the `Actor` methods (which are accessible
+directly by the actor e.g. capRoot.actor.get_transactions(...)), as it's mainly a wrapper to original method accessible in the actor and
+that's only for your own convenience (e.g. provides default values, etc).
 
 ### Router Canister
 
@@ -480,6 +486,8 @@ console.log(userTxns);
 
 ### Kyasshu Layer
 
+TODO: Explain what Kyasshu is, and why Kyasshu Layer is useful
+
 ### `capRoot.get_all_user_transactions(userId, LastEvaluatedKey)`
 > Return all of the user transactions for `userId`, if `LastEvaluatedKey` is returned, you must provide it in subsequent calls to query the rest of the data.
 
@@ -536,7 +544,7 @@ console.log(userTxns);
 
 ## Roadmap
 
-- Cache every endpoitn with Kyasshu
+- Cache every endpoint with Kyasshu
 
 - Support update calls to the main Cap canister
 
