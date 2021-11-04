@@ -23,6 +23,7 @@ The CAP-js library is utilized to integrate UIs/FEs/Apps to CAP to **query & sur
 - [Getting Started](#getting-started)
 	- [Install](#install)
 - [Usage](#usage)
+	- [Quick usage examples](#quick-usage-examples)
 	- [Router Canister](#router-canister)
 	- [`capRouter.get_index_canisters(witness)`](#caprouterget_index_canisterswitness)
 		- [Parameters](#parameters)
@@ -138,6 +139,7 @@ import { CanisterInfo } from '@psychedelic/cap-js';
 // The `ic-history-router` mainnet canister id
 const ICHistoryRouterCanisterId = CanisterInfo['ic-history-router'].mainnet;
 ```
+### Quick usage examples
 
 In order to get transactions of a particular token (e.g: XTC token):
 
@@ -153,7 +155,7 @@ const capRootXTC = await CapRoot.init({
 const xtcTransactions = await capRootXTC.get_transactions()
 ```
 
-Or
+Or instead, pass an instance of capRouter to have the inner call to `get_token_contract_root_bucket` handled for you:
 
 ```js
 const tokenId = 'aanaa-xaaaa-aaaah-aaeiq-cai'	// XTC Canister Id
@@ -163,7 +165,7 @@ const capRootXTC = await CapRoot.init({ tokenId, router: capRouter })
 const xtcTransactions = await capRootXTC.get_transactions()
 ```
 
-Or (if you doesn't have an instance of the router)
+Alternatively, for the case where you don't have a `CapRouter` instance:
 
 ```js
 const tokenId = 'aanaa-xaaaa-aaaah-aaeiq-cai'	// XTC Canister Id
@@ -171,11 +173,33 @@ const tokenId = 'aanaa-xaaaa-aaaah-aaeiq-cai'	// XTC Canister Id
 const capRootXTC = await CapRoot.init({
 	tokenId,
 	routerCanisterId: 'rrkah-fqaaa-aaaaa-aaaaq-cai',
-	hostRouter: 'http://localhost:8000'
+	host: 'http://localhost:8000'
 })
 
 const xtcTransactions = await capRootXTC.get_transactions()
 ```
+
+You're advised to understand [Candid](https://sdk.dfinity.org/docs/candid-guide/candid-intro.html), the interface description language
+for the Dfinity Internet Computer Services, because ultimately, that's where the latest method signatures for the Service endpoints are
+defined, to avoid any typos described in the documentation.
+
+Once you start looking at the original source-code, you might start questioning some decisions.
+
+For example, why `cap-js` at time of writing is wrapping the `Actor` methods which are accessible
+directly in the actor (e.g. `capRoot.actor.get_transactions()`)?
+
+As it's mainly a wrapper to original method accessible in the actor and
+that's for your own convenience (e.g. provides default values) it also provides a chance to the Cache layer to intercept and handle
+those requests.
+
+Since Cache is available (optionally) it helps to have a common API to switch between.
+
+```js
+const tnx = await caRoot.get_transactions(...);
+const tnx = await capCache.get_transactions(...);
+```
+
+Find more about [here](#kyasshu-layer)
 
 ### Router Canister
 
@@ -446,18 +470,14 @@ console.log(userTxns);
 }
 ```
 
-### `capRoot.insert({to, fee, from, memo, operation, caller, amount})`
+### `capRoot.insert({operation, caller, details})`
 > Insert a transaction event to the token contract
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| amount | [amount](#amount) |
-| caller | [principal](#principal) |
-| fee | [bigint](#bigint) |
-| from | [principal](#principal) |
-| memo | [memo](#memo) |
 | operation | [operation](#operation) |
-| to | [principal](#principal) |
+| caller | [principal](#principal) |
+| details | [vec record](#vec-record)
 
 #### Returns
 
@@ -480,6 +500,9 @@ console.log(userTxns);
 > ToDo
 
 ### Kyasshu Layer
+
+[kyasshu](https://github.com/Psychedelic/kyasshu) is a cache layer, that is originally used in the for xtc token service by utilizing lambda, sqs, redis and dynamodb.
+Why would you want to use Kyasshu? Because caching allows you to efficiently reuse previously retrieved data, improving your application performance.
 
 ### `capRoot.get_all_user_transactions(userId, LastEvaluatedKey)`
 > Return all of the user transactions for `userId`, if `LastEvaluatedKey` is returned, you must provide it in subsequent calls to query the rest of the data.
@@ -537,7 +560,7 @@ console.log(userTxns);
 
 ## Roadmap
 
-- Cache every endpoitn with Kyasshu
+- Cache every endpoint with Kyasshu
 
 - Support update calls to the main Cap canister
 
