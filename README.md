@@ -446,18 +446,14 @@ console.log(userTxns);
 }
 ```
 
-### `capRoot.insert({to, fee, from, memo, operation, caller, amount})`
+### `capRoot.insert({operation, caller, details})`
 > Insert a transaction event to the token contract
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| amount | [amount](#amount) |
-| caller | [principal](#principal) |
-| fee | [bigint](#bigint) |
-| from | [principal](#principal) |
-| memo | [memo](#memo) |
 | operation | [operation](#operation) |
-| to | [principal](#principal) |
+| caller | [principal](#principal) |
+| details | [vec record](#vec-record)
 
 #### Returns
 
