@@ -23,6 +23,7 @@ The CAP-js library is utilized to integrate UIs/FEs/Apps to CAP to **query & sur
 - [Getting Started](#getting-started)
 	- [Install](#install)
 - [Usage](#usage)
+	- [Quick usage examples](#quick-usage-examples)
 	- [Router Canister](#router-canister)
 	- [`capRouter.get_index_canisters(witness)`](#caprouterget_index_canisterswitness)
 		- [Parameters](#parameters)
