@@ -73,8 +73,8 @@ type CreateActorFromTokenParams =
     }
   | {
       tokenId: string;
-      routerHost?: string;
-      routerCanisterId?: string;
+      host: string;
+      routerCanisterId: string;
     };
 
 interface CreateActorFromRootParams {
@@ -140,7 +140,7 @@ export class CapBase<T> {
         "router" in args
           ? args.router
           : await CapRouter.init({
-              host: args.routerHost,
+              host,
               canisterId: args.routerCanisterId,
             });
 
@@ -250,8 +250,7 @@ export class CapRoot extends CapBase<_ROOT_SERVICE> {
         ...args,
       });
 
-      const cap = new CapRoot(actor);
-      return cap;
+      return new CapRoot(actor);
     })();
   }
 
