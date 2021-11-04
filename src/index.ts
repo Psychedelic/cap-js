@@ -250,7 +250,9 @@ export class CapRoot extends CapBase<_ROOT_SERVICE> {
         ...args,
       });
 
-      const cap = new CapRoot(actor);
+      const cache = new KyaConnector(KyaUrl());
+      const cap = new CapRoot(actor, cache);
+
       return cap;
     })();
   }
@@ -272,6 +274,18 @@ export class CapRoot extends CapBase<_ROOT_SERVICE> {
     witness?: boolean;
     page?: number;
   }): Promise<GetTransactionsResponseBorrowed> {
+    if (this.cache) {
+      return this.cache?.request({
+        path: `cap/txns/${tokenId}`,
+        params: [
+          {
+            witness,
+            page,
+          },
+        ],
+      }) as unknown as GetTransactionsResponseBorrowed;
+    }
+
     return this.actor.get_transactions({
       page: typeof page === "number" ? [page] : [],
       witness,

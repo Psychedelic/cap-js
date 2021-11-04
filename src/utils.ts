@@ -14,7 +14,7 @@ type DetailVector = { Vec: Array<DetailValue> };
 type GeneralValue = { [key: string]: any };
 
 export interface TransactionPrettified {
-  details: PrettyDetail,
+  details: PrettyDetail;
   to?: string;
   from?: string;
   caller: Principal;
@@ -36,7 +36,9 @@ const decodeDetailValue = (value: DetailValue): DetailType => {
   }
 };
 
-export const prettifyCapTransactions = (transaction: Event) : TransactionPrettified => {
+export const prettifyCapTransactions = (
+  transaction: Event
+): TransactionPrettified => {
   const details = transaction?.details?.reduce<PrettyDetail>(
     (acum, [key, value]) => ({
       ...acum,
