@@ -182,9 +182,23 @@ You're advised to understand [Candid](https://sdk.dfinity.org/docs/candid-guide/
 for the Dfinity Internet Computer Services, because ultimately, that's where the latest method signatures for the Service endpoints are
 defined, to avoid any typos described in the documentation.
 
-At this point you might be curious to understand why `cap-js` at time of writing is wrapping the `Actor` methods (which are accessible
-directly by the actor e.g. capRoot.actor.get_transactions(...)), as it's mainly a wrapper to original method accessible in the actor and
-that's only for your own convenience (e.g. provides default values, etc).
+Once you start looking at the original source-code, you might start questioning some decisions.
+
+For example, why `cap-js` at time of writing is wrapping the `Actor` methods which are accessible
+directly in the actor (e.g. `capRoot.actor.get_transactions()`)?
+
+As it's mainly a wrapper to original method accessible in the actor and
+that's for your own convenience (e.g. provides default values) it also provides a chance to the Cache layer to intercept and handle
+those requests.
+
+Since Cache is available (optionally) it helps to have a common API to switch between.
+
+```js
+const tnx = await caRoot.get_transactions(...);
+const tnx = await capCache.get_transactions(...);
+```
+
+Find more about [here](#kyasshu-layer)
 
 ### Router Canister
 
@@ -486,7 +500,8 @@ console.log(userTxns);
 
 ### Kyasshu Layer
 
-TODO: Explain what Kyasshu is, and why Kyasshu Layer is useful
+[kyasshu](https://github.com/Psychedelic/kyasshu) is a cache layer, that is originally used in the for xtc token service by utilizing lambda, sqs, redis and dynamodb.
+Why would you want to use Kyasshu? Because caching allows you to efficiently reuse previously retrieved data, improving your application performance.
 
 ### `capRoot.get_all_user_transactions(userId, LastEvaluatedKey)`
 > Return all of the user transactions for `userId`, if `LastEvaluatedKey` is returned, you must provide it in subsequent calls to query the rest of the data.
