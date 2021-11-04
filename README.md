@@ -138,6 +138,7 @@ import { CanisterInfo } from '@psychedelic/cap-js';
 // The `ic-history-router` mainnet canister id
 const ICHistoryRouterCanisterId = CanisterInfo['ic-history-router'].mainnet;
 ```
+### Quick usage examples
 
 In order to get transactions of a particular token (e.g: XTC token):
 
@@ -153,7 +154,7 @@ const capRootXTC = await CapRoot.init({
 const xtcTransactions = await capRootXTC.get_transactions()
 ```
 
-Or
+Or instead, pass an instance of capRouter to have the inner call to `get_token_contract_root_bucket` handled for you:
 
 ```js
 const tokenId = 'aanaa-xaaaa-aaaah-aaeiq-cai'	// XTC Canister Id
@@ -163,7 +164,7 @@ const capRootXTC = await CapRoot.init({ tokenId, router: capRouter })
 const xtcTransactions = await capRootXTC.get_transactions()
 ```
 
-Or (if you doesn't have an instance of the router)
+Alternatively, for the case where you don't have a `CapRouter` instance:
 
 ```js
 const tokenId = 'aanaa-xaaaa-aaaah-aaeiq-cai'	// XTC Canister Id
@@ -171,11 +172,13 @@ const tokenId = 'aanaa-xaaaa-aaaah-aaeiq-cai'	// XTC Canister Id
 const capRootXTC = await CapRoot.init({
 	tokenId,
 	routerCanisterId: 'rrkah-fqaaa-aaaaa-aaaaq-cai',
-	hostRouter: 'http://localhost:8000'
+	host: 'http://localhost:8000'
 })
 
 const xtcTransactions = await capRootXTC.get_transactions()
 ```
+
+
 
 ### Router Canister
 
