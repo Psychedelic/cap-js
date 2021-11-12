@@ -254,6 +254,10 @@ export class CapRoot extends CapBase<_ROOT_SERVICE> {
     })();
   }
 
+  public async contract_id(): Promise<Principal> {
+    return this.actor.contract_id();
+  }
+
   public async get_transaction(
     id: bigint,
     witness = false

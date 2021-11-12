@@ -43,5 +43,6 @@ export const routerFactory = ({ IDL }: { IDL: any }) => {
     ),
     insert_new_users: IDL.Func([IDL.Principal, IDL.Vec(IDL.Principal)], [], []),
     install_bucket_code: IDL.Func([IDL.Principal], [], []),
+    trigger_upgrade: IDL.Func([], [], []),
   });
 };

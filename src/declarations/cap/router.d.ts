@@ -43,4 +43,5 @@ export default interface _SERVICE {
     arg_1: Array<Principal>
   ) => Promise<undefined>;
   install_bucket_code: (arg_0: Principal) => Promise<undefined>;
+  trigger_upgrade: () => Promise<undefined>;
 }
