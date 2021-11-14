@@ -312,6 +312,10 @@ export class CapRoot extends CapBase<_ROOT_SERVICE> {
       caller,
     });
   }
+
+  public async size(): Promise<bigint> {
+    return this.actor.size();
+  }
 }
 
 export class CapCache extends CapBase<_ROOT_SERVICE> {
