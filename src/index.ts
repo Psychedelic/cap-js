@@ -193,6 +193,10 @@ export class CapRouter extends CapBase<_ROUTER_SERVICE> {
     })();
   }
 
+  public async trigger_upgrade(): Promise<undefined> {
+    return this.actor.trigger_upgrade();
+  }
+
   public async get_index_canisters({
     witness = false,
   }: {
