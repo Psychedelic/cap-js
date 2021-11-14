@@ -60,6 +60,7 @@ export interface Witness {
   tree: Array<number>;
 }
 export default interface _SERVICE {
+  contract_id: () => Promise<Principal>;
   get_bucket_for: (arg_0: WithIdArg) => Promise<GetBucketResponse>;
   get_next_canisters: (
     arg_0: WithWitnessArg

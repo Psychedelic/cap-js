@@ -193,6 +193,10 @@ export class CapRouter extends CapBase<_ROUTER_SERVICE> {
     })();
   }
 
+  public async trigger_upgrade(): Promise<undefined> {
+    return this.actor.trigger_upgrade();
+  }
+
   public async get_index_canisters({
     witness = false,
   }: {
@@ -252,6 +256,10 @@ export class CapRoot extends CapBase<_ROOT_SERVICE> {
 
       return new CapRoot(actor);
     })();
+  }
+
+  public async contract_id(): Promise<Principal> {
+    return this.actor.contract_id();
   }
 
   public async get_transaction(

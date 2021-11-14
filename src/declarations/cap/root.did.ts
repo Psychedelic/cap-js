@@ -57,6 +57,7 @@ export const rootFactory = ({ IDL }: { IDL: any }) => {
     caller: IDL.Principal,
   });
   return IDL.Service({
+    contract_id: IDL.Func([], [IDL.Principal], ["query"]),
     get_bucket_for: IDL.Func([WithIdArg], [GetBucketResponse], ["query"]),
     get_next_canisters: IDL.Func(
       [WithWitnessArg],
