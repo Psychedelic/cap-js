@@ -13,7 +13,7 @@ The CAP-js library is utilized to integrate UIs/FEs/Apps to CAP to **query & sur
 - Visit [our website](https://cap.ooo)
 - Read [our announcement](https://medium.com/@cap_ois/db9bdfe9129f?source=friends_link&sk=924b190ea080ed4e4593fc81396b0a7a)
 - Visit [CAP's main repository](https://github.com/psychedelic/cap)
-- Visit [CAP-SDK repository](https://github.com/Psychedelic/cap/tree/cap-sdk/sdk) 
+- Visit [CAP-SDK repository](https://github.com/Psychedelic/cap/tree/main/sdk) 
 
 >**IMPORTANT:** CAP is currently in development 🚧 and will release in the first week of November, thus it is not on mainnet or usable yet. You might see our documentation is light on the SDK/Main repo still. We're delayed in this to focus on testing, but will soon update this page with guides & detailed examples for developers.
 
