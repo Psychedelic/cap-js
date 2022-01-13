@@ -204,7 +204,7 @@ Find more about [here](#kyasshu-layer)
 ### Router Canister
 
 ### `capRouter.get_index_canisters(witness)`
-> Return all Cap index canisters
+> Return all Cap index canisters (Router and any replicas, when scaled)
 
 #### Parameters
 
