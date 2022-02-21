@@ -262,6 +262,10 @@ export class CapRoot extends CapBase<_ROOT_SERVICE> {
     return this.actor.contract_id();
   }
 
+  public async balance(): Promise<bigint> {
+    return this.actor.balance();
+  }
+
   public async get_transaction(
     id: bigint,
     witness = false
@@ -297,6 +301,22 @@ export class CapRoot extends CapBase<_ROOT_SERVICE> {
     return this.actor.get_user_transactions({
       page: typeof page === "number" ? [page] : [],
       user,
+      witness,
+    });
+  }
+
+  public async get_token_transactions({
+    page,
+    token_id,
+    witness = false,
+  }: {
+    page?: number;
+    token_id: bigint;
+    witness?: boolean;
+  }): Promise<GetTransactionsResponseBorrowed> {
+    return this.actor.get_token_transactions({
+      page: typeof page === "number" ? [page] : [],
+      token_id,
       witness,
     });
   }

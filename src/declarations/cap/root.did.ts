@@ -14,12 +14,18 @@ export const rootFactory = ({ IDL }: { IDL: any }) => {
     witness: IDL.Opt(Witness),
     canisters: IDL.Vec(IDL.Principal),
   });
+  const GetTokenTransactionsArg = IDL.Record({
+    token_id: IDL.Nat64,
+    page: IDL.Opt(IDL.Nat32),
+    witness: IDL.Bool,
+  });
   DetailValue.fill(
     IDL.Variant({
       I64: IDL.Int64,
       U64: IDL.Nat64,
       Vec: IDL.Vec(DetailValue),
       Slice: IDL.Vec(IDL.Nat8),
+      TokenIdU64: IDL.Nat64,
       Text: IDL.Text,
       True: IDL.Null,
       False: IDL.Null,
@@ -33,6 +39,11 @@ export const rootFactory = ({ IDL }: { IDL: any }) => {
     details: IDL.Vec(IDL.Tuple(IDL.Text, DetailValue)),
     caller: IDL.Principal,
   });
+  const GetTransactionsResponseBorrowed = IDL.Record({
+    data: IDL.Vec(Event),
+    page: IDL.Nat32,
+    witness: IDL.Opt(Witness),
+  });
   const GetTransactionResponse = IDL.Variant({
     Delegate: IDL.Tuple(IDL.Principal, IDL.Opt(Witness)),
     Found: IDL.Tuple(IDL.Opt(Event), IDL.Opt(Witness)),
@@ -40,11 +51,6 @@ export const rootFactory = ({ IDL }: { IDL: any }) => {
   const GetTransactionsArg = IDL.Record({
     page: IDL.Opt(IDL.Nat32),
     witness: IDL.Bool,
-  });
-  const GetTransactionsResponseBorrowed = IDL.Record({
-    data: IDL.Vec(Event),
-    page: IDL.Nat32,
-    witness: IDL.Opt(Witness),
   });
   const GetUserTransactionsArg = IDL.Record({
     page: IDL.Opt(IDL.Nat32),
@@ -57,11 +63,17 @@ export const rootFactory = ({ IDL }: { IDL: any }) => {
     caller: IDL.Principal,
   });
   return IDL.Service({
+    balance: IDL.Func([], [IDL.Nat64], ["query"]),
     contract_id: IDL.Func([], [IDL.Principal], ["query"]),
     get_bucket_for: IDL.Func([WithIdArg], [GetBucketResponse], ["query"]),
     get_next_canisters: IDL.Func(
       [WithWitnessArg],
       [GetNextCanistersResponse],
+      ["query"]
+    ),
+    get_token_transactions: IDL.Func(
+      [GetTokenTransactionsArg],
+      [GetTransactionsResponseBorrowed],
       ["query"]
     ),
     get_transaction: IDL.Func([WithIdArg], [GetTransactionResponse], ["query"]),
