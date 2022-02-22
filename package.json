@@ -9,7 +9,7 @@
   "types": "dist/index.d.ts",
   "browser": "dist/index.js",
   "author": "b0xtch",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "repository": {
     "type": "git",
     "url": "git@github.com:Psychedelic/cap-js.git"
