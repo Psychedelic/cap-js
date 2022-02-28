@@ -5,6 +5,7 @@ export type DetailValue =
   | { U64: bigint }
   | { Vec: Array<DetailValue> }
   | { Slice: Array<number> }
+  | { TokenIdU64: bigint }
   | { Text: string }
   | { True: null }
   | { False: null }
@@ -23,6 +24,11 @@ export interface GetBucketResponse {
 export interface GetNextCanistersResponse {
   witness: [] | [Witness];
   canisters: Array<Principal>;
+}
+export interface GetTokenTransactionsArg {
+  token_id: bigint;
+  page: [] | [number];
+  witness: boolean;
 }
 export type GetTransactionResponse =
   | {
@@ -60,11 +66,15 @@ export interface Witness {
   tree: Array<number>;
 }
 export default interface _SERVICE {
+  balance: () => Promise<bigint>;
   contract_id: () => Promise<Principal>;
   get_bucket_for: (arg_0: WithIdArg) => Promise<GetBucketResponse>;
   get_next_canisters: (
     arg_0: WithWitnessArg
   ) => Promise<GetNextCanistersResponse>;
+  get_token_transactions: (
+    arg_0: GetTokenTransactionsArg
+  ) => Promise<GetTransactionsResponseBorrowed>;
   get_transaction: (arg_0: WithIdArg) => Promise<GetTransactionResponse>;
   get_transactions: (
     arg_0: GetTransactionsArg
