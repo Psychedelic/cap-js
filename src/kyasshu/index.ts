@@ -49,7 +49,7 @@ export class KyaConnector extends EventEmitter implements KyaApi {
       throw new Error((error as Error).message);
     }
 
-    if (resp.statusText !== "OK") {
+    if(!(resp.status >= 200 && resp.status < 300)){
       throw new Error(`status: ${resp.status}, ${resp.statusText}`);
     }
 
