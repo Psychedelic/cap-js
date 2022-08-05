@@ -145,7 +145,7 @@ export class CapBase<T> {
             });
 
       const { canister } = await router.get_token_contract_root_bucket({
-        tokenId: Principal.fromText(args.tokenId),
+        canister: Principal.fromText(args.tokenId),
       });
 
       if (!canister?.[0]) throw Error(`Token ${args.tokenId} not in cap`);
@@ -208,14 +208,14 @@ export class CapRouter extends CapBase<_ROUTER_SERVICE> {
   }
 
   public async get_token_contract_root_bucket({
-    tokenId,
+    canister,
     witness = false,
   }: {
-    tokenId: Principal;
+    canister: Principal;
     witness?: boolean;
   }): Promise<GetTokenContractRootBucketResponse> {
     return this.actor.get_token_contract_root_bucket({
-      canister: tokenId,
+      canister,
       witness,
     });
   }
